@@ -40,7 +40,7 @@ The scripts expect the competition data under `data/raw/LibriBrain-Competition-2
 ## Notes
 
 - No labels of the test set, cross-track metadata or timing leaks are used. Self-training and guided proposals use only our own predictions.
-- Model checkpoints are too large for git. Links will be added in `docs/REPRODUCE.md`.
+- Model checkpoints and fine-tuned LMs are on [Google Drive](https://drive.google.com/drive/folders/1HIGSl6Yx3K_mzwb7Op_ZBc0fdD9w8FNT); see `docs/REPRODUCE.md`, Section 5.
 
 ## License
 

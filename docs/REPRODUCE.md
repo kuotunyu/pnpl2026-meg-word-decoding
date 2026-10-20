@@ -88,7 +88,7 @@ Running `sent_cand.py` again with the same inputs reproduces `final_IN1Qp_SCGL_b
 
 ## 5. Checkpoints
 
-The checkpoints are not stored in git. They are shared from Google Drive: *link to be added*.
+The checkpoints are not stored in git. They are shared from Google Drive: https://drive.google.com/drive/folders/1HIGSl6Yx3K_mzwb7Op_ZBc0fdD9w8FNT (the folder also contains checkpoints of development runs that are not part of the final ensembles).
 - `<tag>/model.pt` and `<tag>/metrics.json` for every member listed above.
 - `release_extras/local_members.zip`: the members trained on a local GPU (`f_s1-3`, `fe_s4`, `pfl_s1-3`).
 - `release_extras/lm_gpt2_llm_plus.zip` and `release_extras/lm_gpt2_llm_big.zip`: the fine-tuned LMs.
