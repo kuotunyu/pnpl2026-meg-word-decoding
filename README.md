@@ -24,17 +24,15 @@ A workshop write-up is in preparation (due 1 December 2026) and will be added un
 ## Repository layout
 
 ```
-experiments/20261008_full_subj0_deepnet/sources/   all code (run from experiments/20261008_full_subj0_deepnet/)
+experiments/20261008_full_subj0_deepnet/sources/   code (run from experiments/20261008_full_subj0_deepnet/)
   download_subj0.py, preprocess.py, preprocess_w3.py  data download and PCA epochs (1 s / 3 s windows)
-  train_ctx.py, train.py                               MEG models (CNN + sentence Transformer)
-  pseudo_ft.py                                         self-training on the test recordings
-  lm_fusion.py, lm_calib.py, make_final.py, build_final.sh  LM fusion and submission assembly
-  vocab_corpus.py, gen_vocab_llm.py, merge_corpus.py, ft_vocab_lm.py  in-domain corpus and LM
+  train.py, train_ctx.py                               MEG models (CNN + sentence Transformer)
+  pseudo_ft.py, teacher_W.csv, teacher_P1.csv          self-training on the test recordings
+  lm_fusion.py, lm_calib.py, make_final.py             LM fusion and submission assembly
+  vocab_corpus.py, gen_vocab_llm.py, ft_vocab_lm.py    in-domain corpus and LM
   gen_guided.py, sent_cand.py                          whole-sentence candidate decoding
-  colab_*.sh, local_queue*.sh                          the exact training runs (Colab A100 / local RTX 4090)
-  *_eval.py, proxy_*.py, val_compare.py, ...           validation and negative-result experiments
 corpora/        vocabulary-only sentence corpora used for the LMs and candidates
-docs/REPRODUCE.md  ensemble member lists and the commands for the best submissions
+docs/REPRODUCE.md  ensemble members, training commands, checkpoints and the commands for the best submissions
 ```
 
 The scripts expect the competition data under `data/raw/LibriBrain-Competition-2026/` at the repository root, and they write to `experiments/20261008_full_subj0_deepnet/outputs/`. Neither folder is tracked. `download_subj0.py` fetches the data from Hugging Face.
