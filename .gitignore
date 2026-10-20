@@ -1,0 +1,7 @@
+data/
+experiments/*/outputs/
+__pycache__/
+*.pyc
+*.pt
+*.npz
+*.npy
