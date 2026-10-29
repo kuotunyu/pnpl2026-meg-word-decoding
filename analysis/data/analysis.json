@@ -1,0 +1,379 @@
+{
+ "n_all": 99,
+ "n_pre_deadline": 95,
+ "corr_pub_ge_0.0": [
+  99,
+  0.913
+ ],
+ "corr_pub_ge_0.6": [
+  89,
+  0.079
+ ],
+ "corr_pub_ge_0.66": [
+  64,
+  -0.375
+ ],
+ "corr_pub_ge_0.69": [
+  36,
+  -0.438
+ ],
+ "stage_early": {
+  "n": 4,
+  "mean_pub": 0.2626,
+  "mean_priv": 0.275,
+  "best_priv": [
+   0.32501,
+   "sub_v1"
+  ]
+ },
+ "stage_meg": {
+  "n": 66,
+  "mean_pub": 0.6579,
+  "mean_priv": 0.6538,
+  "best_priv": [
+   0.68814,
+   "final_gpt2"
+  ]
+ },
+ "stage_inlm": {
+  "n": 19,
+  "mean_pub": 0.7076,
+  "mean_priv": 0.6485,
+  "best_priv": [
+   0.67704,
+   "final_IN1_mix3"
+  ]
+ },
+ "stage_cand": {
+  "n": 10,
+  "mean_pub": 0.7173,
+  "mean_priv": 0.6469,
+  "best_priv": [
+   0.66304,
+   "final_IN1Qp_SC0.15"
+  ]
+ },
+ "pairs": [
+  {
+   "change": "sentence-context model",
+   "base": "sub_v1",
+   "variant": "sub_c1",
+   "d_pub": 0.2666,
+   "d_priv": 0.2074,
+   "val": "n/a"
+  },
+  {
+   "change": "closed-vocab LM fusion (PMI)",
+   "base": "sub_c5",
+   "variant": "sub_c5_lmpmi05",
+   "d_pub": 0.0455,
+   "d_priv": 0.0552,
+   "val": "+"
+  },
+  {
+   "change": "N-best hard marginals instead of soft PMI",
+   "base": "sub_c5_lmpmi05",
+   "variant": "sub_c5_lm05",
+   "d_pub": -0.0744,
+   "d_priv": -0.0607,
+   "val": "n/a"
+  },
+  {
+   "change": "Qwen3-8B instead of GPT-2",
+   "base": "final_gpt2",
+   "variant": "final_qwen3_8b",
+   "d_pub": -0.0407,
+   "d_priv": -0.0794,
+   "val": "-"
+  },
+  {
+   "change": "3 s windows + LM calibration",
+   "base": "final_gpt2",
+   "variant": "finalW_calib2",
+   "d_pub": 0.0194,
+   "d_priv": -0.0281,
+   "val": "n/a"
+  },
+  {
+   "change": "sentence prior correction tau0.5",
+   "base": "finalW_calib2",
+   "variant": "finalW_calib2_t0.5",
+   "d_pub": -0.0123,
+   "d_priv": -0.0009,
+   "val": "+"
+  },
+  {
+   "change": "higher 1 s share",
+   "base": "finalW_calib2_iso14",
+   "variant": "finalY_calib2_t0",
+   "d_pub": -0.0292,
+   "d_priv": 0.0034,
+   "val": "+"
+  },
+  {
+   "change": "self-training round 1",
+   "base": "finalW_calib2_iso14",
+   "variant": "final_P1",
+   "d_pub": 0.0151,
+   "d_priv": 0.002,
+   "val": "n/a"
+  },
+  {
+   "change": "LM fusion after self-training",
+   "base": "final_P1noLM",
+   "variant": "final_P1",
+   "d_pub": 0.0215,
+   "d_priv": -0.0118,
+   "val": "n/a"
+  },
+  {
+   "change": "self-training round 2 (all replaced)",
+   "base": "final_P1",
+   "variant": "final_P2",
+   "d_pub": -0.0095,
+   "d_priv": -0.01,
+   "val": "n/a"
+  },
+  {
+   "change": "sentence-end LM term",
+   "base": "final_P1",
+   "variant": "final_P1eos",
+   "d_pub": -0.0513,
+   "d_priv": 0.0189,
+   "val": "n/a"
+  },
+  {
+   "change": "larger diverse ensemble",
+   "base": "final_P1",
+   "variant": "final_B2",
+   "d_pub": 0.004,
+   "d_priv": 0.0151,
+   "val": "n/a"
+  },
+  {
+   "change": "12-layer + wide-CNN members",
+   "base": "final_B2",
+   "variant": "final_B5",
+   "d_pub": 0.0115,
+   "d_priv": -0.0115,
+   "val": "n/a"
+  },
+  {
+   "change": "all members self-trained (one teacher)",
+   "base": "final_B2",
+   "variant": "final_C",
+   "d_pub": -0.0137,
+   "d_priv": -0.0487,
+   "val": "n/a"
+  },
+  {
+   "change": "more 1 s members",
+   "base": "final_B5",
+   "variant": "final_B6a",
+   "d_pub": -0.0289,
+   "d_priv": 0.0205,
+   "val": "+"
+  },
+  {
+   "change": "wide CNN instead of 12-layer",
+   "base": "final_B5",
+   "variant": "final_F1",
+   "d_pub": -0.0318,
+   "d_priv": -0.001,
+   "val": "+"
+  },
+  {
+   "change": "sentence prior correction tau0.3",
+   "base": "final_B5i",
+   "variant": "final_B5i_t0.3",
+   "d_pub": -0.0374,
+   "d_priv": 0.0168,
+   "val": "+"
+  },
+  {
+   "change": "word-timing evidence",
+   "base": "final_B5i",
+   "variant": "final_B5d10",
+   "d_pub": -0.0237,
+   "d_priv": -0.0082,
+   "val": "+"
+  },
+  {
+   "change": "input rescaling",
+   "base": "final_B5i",
+   "variant": "final_B5irs",
+   "d_pub": -0.0066,
+   "d_priv": 0.0036,
+   "val": "n/a"
+  },
+  {
+   "change": "validation-optimal stack V",
+   "base": "final_B5i",
+   "variant": "final_V",
+   "d_pub": -0.0267,
+   "d_priv": 0.022,
+   "val": "+"
+  },
+  {
+   "change": "lr-fixed deep members",
+   "base": "final_B5i",
+   "variant": "final_B8b",
+   "d_pub": -0.0107,
+   "d_priv": 0.0017,
+   "val": "n/a"
+  },
+  {
+   "change": "in-domain LM (807 sentences)",
+   "base": "final_B5i",
+   "variant": "final_B5i_L1",
+   "d_pub": 0.0101,
+   "d_priv": -0.0385,
+   "val": "n/a"
+  },
+  {
+   "change": "in-domain LM, 3-seed mixture",
+   "base": "final_B5i",
+   "variant": "final_B5i_L1avg",
+   "d_pub": 0.0101,
+   "d_priv": -0.0119,
+   "val": "n/a"
+  },
+  {
+   "change": "in-domain LM on 3,742 sentences (IN1)",
+   "base": "final_B5i_L1_IN1",
+   "variant": "final_IN1_Q_big",
+   "d_pub": 0.0062,
+   "d_priv": 0.0248,
+   "val": "n/a"
+  },
+  {
+   "change": "candidate decoding (guided + LM prior)",
+   "base": "final_IN1_Q_llm_plus",
+   "variant": "final_IN1Qp_SCGL_b0.5",
+   "d_pub": 0.009,
+   "d_priv": -0.0056,
+   "val": "n/a"
+  }
+ ],
+ "pairs_sign_agree_big": [
+  5,
+  7
+ ],
+ "pairs_sign_agree_small": [
+  7,
+  18
+ ],
+ "pairs_corr_small": -0.323,
+ "val_vs_pub_disagreements": [
+  [
+   "sentence prior correction tau0.5",
+   -0.0123,
+   -0.0009,
+   "public"
+  ],
+  [
+   "higher 1 s share",
+   -0.0292,
+   0.0034,
+   "validation"
+  ],
+  [
+   "more 1 s members",
+   -0.0289,
+   0.0205,
+   "validation"
+  ],
+  [
+   "wide CNN instead of 12-layer",
+   -0.0318,
+   -0.001,
+   "public"
+  ],
+  [
+   "sentence prior correction tau0.3",
+   -0.0374,
+   0.0168,
+   "validation"
+  ],
+  [
+   "word-timing evidence",
+   -0.0237,
+   -0.0082,
+   "public"
+  ],
+  [
+   "validation-optimal stack V",
+   -0.0267,
+   0.022,
+   "validation"
+  ]
+ ],
+ "select_actual": [
+  0.66304,
+  "final_IN1Qp_SC0.15"
+ ],
+ "select_earlier": [
+  0.68767,
+  "final_V"
+ ],
+ "select_top10_public": [
+  0.66304,
+  "final_IN1Qp_SC0.15"
+ ],
+ "select_top10_public_no_late_lm": [
+  0.67718,
+  "final_B2"
+ ],
+ "select_random10_pub_ge_0.66": {
+  "pool": 60,
+  "mean": 0.6802,
+  "p10": 0.6733,
+  "p90": 0.6877
+ },
+ "best_private_overall": [
+  [
+   0.68814,
+   "final_gpt2",
+   0.65986
+  ],
+  [
+   0.68767,
+   "final_V",
+   0.68315
+  ],
+  [
+   0.68618,
+   "final_B6a",
+   0.68096
+  ],
+  [
+   0.68248,
+   "final_B5i_t0.3",
+   0.67248
+  ],
+  [
+   0.68184,
+   "finalW_gpt2_a03",
+   0.6418
+  ]
+ ],
+ "note_private_lb": "rank 44/91 at 0.66304 (private leaderboard page, 2026-10-25)",
+ "public_values_repeated": [
+  [
+   0.71301,
+   3
+  ],
+  [
+   0.72001,
+   3
+  ],
+  [
+   0.69915,
+   3
+  ]
+ ],
+ "public_distinct": [
+  81,
+  95
+ ]
+}

@@ -1,0 +1,100 @@
+ref,fileName,date,description,status,publicScore,privateScore
+57429237,abl_A5_lmonly.csv,2026-10-20 08:13:44.587000,"ablation A5: guided pool 8620, LM prior only (no MEG term), lam 0.3",SubmissionStatus.COMPLETE,0.70797,0.62437
+57429231,abl_A3_gui_b0.csv,2026-10-20 08:13:35.443000,"ablation A3: guided pool 8620, no LM prior, lam 0.3",SubmissionStatus.COMPLETE,0.70801,0.64387
+57429230,abl_A2_gen_b05.csv,2026-10-20 08:13:25.220000,"ablation A2: general pool 4892, LM prior 0.5, lam 0.3",SubmissionStatus.COMPLETE,0.70634,0.65241
+57429228,abl_A1_gen_b0.csv,2026-10-20 08:13:17.117000,"ablation A1: general pool 4892, no LM prior, lam 0.3 (base IN1_Q_llm_plus)",SubmissionStatus.COMPLETE,0.72134,0.66161
+57251624,final_IN1_Q_big_SCGL_l0.3.csv,2026-10-16 02:22:09.137000,"IN1_Q_big_SCGL_l0.3: Q_big LM + round-1 guided candidates only (no round 2), LM prior 0.5, lam 0.3",SubmissionStatus.COMPLETE,0.71301,0.64201
+57251620,final_AVG_SCGL_Qbig.csv,2026-10-16 02:21:58.947000,AVG: mean of SCGL_b0.5 (0.733) and IN1_Q_big (0.728) probabilities,SubmissionStatus.COMPLETE,0.73301,0.65118
+57251540,final_IN1_Q_big_SCG2L_l0.5.csv,2026-10-16 02:18:40.110000,"IN1_Q_big_SCG2L_l0.5: same, lam 0.5",SubmissionStatus.COMPLETE,0.71634,0.64146
+57251537,final_IN1_Q_big_SCG2L_l0.3.csv,2026-10-16 02:18:30.923000,"IN1_Q_big_SCG2L_l0.3: Q_big LM + sentence candidates (corpus + 2 rounds MEG-guided Qwen, LM prior 0.5), lam 0.3",SubmissionStatus.COMPLETE,0.71301,0.64356
+57247644,final_IN1Qp_SCGL_b0.5.csv,2026-10-16 00:03:02.193000,"IN1Qp_SCGL_b0.5: + MEG-guided Qwen candidates, LM fluency prior beta 0.5, lam 0.3",SubmissionStatus.COMPLETE,0.73301,0.64574
+57247612,final_IN1Qp_SC0.15.csv,2026-10-16 00:02:51.280000,"IN1Qp_SC0.15: best + whole-sentence corpus candidates (length-matched, MEG-scored) marginals, lam 0.15",SubmissionStatus.COMPLETE,0.72134,0.66304
+57247589,final_B9cIN_Qplus.csv,2026-10-16 00:02:39.667000,B9cIN_Qplus: 40-model ensemble + Qwen+Claude vocab GPT-2 + gpt2-medium,SubmissionStatus.COMPLETE,0.72219,0.65870
+57247562,final_IN1_Q_big.csv,2026-10-16 00:02:28.637000,IN1_Q_big: LM = GPT-2 fine-tuned on 3742 vocab sentences + gpt2-medium,SubmissionStatus.COMPLETE,0.72801,0.65845
+57247528,final_IN1_mix3.csv,2026-10-16 00:02:17.020000,IN1_mix3: LMs = vocab GPT-2 (Qwen+Claude) + vocab Qwen2.5-1.5B + gpt2-medium,SubmissionStatus.COMPLETE,0.71134,0.67704
+57247484,final_IN1_qwen15_big.csv,2026-10-16 00:02:06.203000,"IN1_qwen15: IN1 models, LM = Qwen2.5-1.5B fine-tuned on 3742 vocab sentences + gpt2-medium",SubmissionStatus.COMPLETE,0.70234,0.65047
+57214630,final_IN1_Q_llm_plus.csv,2026-10-15 03:27:11.567000,"IN1_Q_llm_plus: IN1 models, LM = GPT-2 fine-tuned on Qwen + Claude vocab sentences (2103) + gpt2-medium",SubmissionStatus.COMPLETE,0.72401,0.65137
+57214624,final_IN1_Q_llm.csv,2026-10-15 03:27:01.970000,"IN1_Q_llm: IN1 models, LM = GPT-2 fine-tuned on 1575 Qwen3.5-9B-generated vocab sentences + gpt2-medium",SubmissionStatus.COMPLETE,0.71301,0.67371
+57199139,final_REF3.csv,2026-10-15 00:07:41.310000,REF3 (A/B): 3 same-setting models without instance norm (w3e_s16-18) + L1 LMs,SubmissionStatus.COMPLETE,0.68643,0.65660
+57199126,final_IN3.csv,2026-10-15 00:07:30.497000,IN3 (A/B): only the 3 instance-norm models + L1 LMs,SubmissionStatus.COMPLETE,0.64243,0.66024
+57199112,final_B5i_L1_IN2.csv,2026-10-15 00:07:20.760000,B5i_L1_IN2: L1 with w3f_s4-6 replaced by the 3 instance-norm models,SubmissionStatus.COMPLETE,0.72001,0.63618
+57199098,final_B5i_L1_IN1.csv,2026-10-15 00:07:10.667000,"B5i_L1_IN1: L1 + 3 instance-norm models (w3I_s61, w3G_s62, w3I_s63)",SubmissionStatus.COMPLETE,0.72179,0.63368
+57198711,final_B9c_L1.csv,2026-10-15 00:02:42.077000,B9c_L1: B9c (37 models) with L1 LMs (vocab GPT-2 + gpt2-medium),SubmissionStatus.COMPLETE,0.71997,0.63295
+57198689,final_B5i_L1avg.csv,2026-10-15 00:02:32.710000,B5i_L1avg: mixture of 3 vocab GPT-2 seeds + gpt2-medium,SubmissionStatus.COMPLETE,0.72001,0.65374
+57198664,final_B5i_L1s2.csv,2026-10-15 00:02:22.547000,"B5i_L1s2: L1 recipe, vocab GPT-2 fine-tune seed 2 (noise check of L1)",SubmissionStatus.COMPLETE,0.71893,0.62998
+57198641,final_B5i_L1s1.csv,2026-10-15 00:02:12.830000,"B5i_L1s1: L1 recipe, vocab GPT-2 fine-tune seed 1 (noise check of L1)",SubmissionStatus.COMPLETE,0.70779,0.64208
+57191785,final_B5i_L5.csv,2026-10-14 18:18:07.363000,B5i_L5: LM = vocab-fine-tuned GPT-2 only (1368 sentences),SubmissionStatus.COMPLETE,0.68179,0.62430
+57191782,final_B5i_L4.csv,2026-10-14 18:17:56.367000,B5i_L4: LMs = vocab-fine-tuned GPT-2 + vocab-fine-tuned gpt2-medium,SubmissionStatus.COMPLETE,0.68679,0.62680
+57191774,final_B5i_L3.csv,2026-10-14 18:17:47.313000,B5i_L3: LM = GPT-2 fine-tuned on 1368 vocab sentences + gpt2-medium,SubmissionStatus.COMPLETE,0.71001,0.66551
+57188333,final_B5i_L2.csv,2026-10-14 16:09:38.553000,B5i_L2: LMs = gpt2 + vocab-fine-tuned gpt2 + gpt2-medium (calibrated),SubmissionStatus.COMPLETE,0.70668,0.66314
+57188325,final_B5i_L1.csv,2026-10-14 16:09:28.877000,B5i_L1: LM = GPT-2 fine-tuned on 807 synthetic conversational sentences from the 50-word vocabulary + gpt2-medium (calibrated),SubmissionStatus.COMPLETE,0.72001,0.62720
+57166566,final_V.csv,2026-10-14 04:14:18.050000,V: validation-optimal stack = B5i models with input rescale + word-timing evidence (beta 0.5) + sentence prior correction tau 0.3; iso = rescaled B5i iso,SubmissionStatus.COMPLETE,0.68315,0.68767
+57166109,final_B5irs.csv,2026-10-14 03:55:58.367000,B5i_rs: B5i models re-inferred with holdout inputs rescaled per PCA component to the training std (holdout was ~1.35x larger),SubmissionStatus.COMPLETE,0.70330,0.66932
+57164631,final_B9c.csv,2026-10-14 02:55:57.733000,B9c: B9 sentence rows (37 models incl. lr-fixed 12/16-layer) + iso with all good 3 s models (25) and 1 s group x2 (~47%),SubmissionStatus.COMPLETE,0.69915,0.66449
+57164532,final_B9.csv,2026-10-14 02:51:17.137000,B9: B8b + self-trained 12-layer uw3M_s41/uw3N_s43 + 16-layer w3X_s51 + 12-layer w3N_s44; iso = B5i,SubmissionStatus.COMPLETE,0.69915,0.66449
+57164322,final_B8b.csv,2026-10-14 02:41:56.667000,"B8b: B5i sentence - w3L_s21 + 12-layer lr-fixed w3M_s41/42, w3N_s43 + w3e_s16/17/18; iso = B5i",SubmissionStatus.COMPLETE,0.69915,0.66734
+57150826,final_B8a.csv,2026-10-13 17:04:35.733000,"B8a: B5i with w3L_s21 (12L lr5e-4, undertrained) -> w3M_s41 (12L lr2e-4, loss 8.42) + w3e_s16; iso = B5i",SubmissionStatus.COMPLETE,0.69700,0.66568
+57143649,final_B5d10.csv,2026-10-13 12:30:35.367000,"B5d10: same, beta 1.0",SubmissionStatus.COMPLETE,0.68619,0.65748
+57143644,final_B5d05.csv,2026-10-13 12:30:24.253000,"B5d05: B5i + word-timing evidence (gap to next onset, sentence-normalised) beta 0.5 before LM fusion",SubmissionStatus.COMPLETE,0.65001,0.65535
+57140614,final_B7b.csv,2026-10-13 10:54:23.443000,"B7b: B5i sentence members + 9 teacher-B5i self-trained (vw3_s1-6, vf7_s1-3); iso = B5i",SubmissionStatus.COMPLETE,0.68945,0.66272
+57140610,final_B7a.csv,2026-10-13 10:54:14.137000,"B7a: B5i with pw3_s1-3, pf7_s1 replaced by teacher-B5i self-trained vw3_s1-3, vf7_s1; iso = B5i",SubmissionStatus.COMPLETE,0.68882,0.66868
+57138522,final_B5i_t0.3.csv,2026-10-13 09:38:39.833000,B5i_t0.3: B5i with sentence-row prior correction tau 0.3 (proxy +0.03),SubmissionStatus.COMPLETE,0.67248,0.68248
+57137017,final_M3.csv,2026-10-13 08:37:31.297000,"M3: geometric mean of B5i, B2, B4, P1 sentence rows; iso rows = B5i",SubmissionStatus.COMPLETE,0.68653,0.67568
+57136987,final_F2.csv,2026-10-13 08:36:26.040000,"F2: validation-driven. B5 sentence - w3L_s21 + 6 wide-CNN originals (w3C_s22/24/27/29/31, w3Cd_s30) + uw3C_s24/27 + f7C_s32; iso 22x3s + 2x11 1s",SubmissionStatus.COMPLETE,0.65629,0.66528
+57128504,final_F1.csv,2026-10-13 03:07:16.253000,"F1: B5 - w3L_s21 (12-layer unstable in val) + wide CNN w3C_s24 w3C_s27 uw3C_s22; iso: + CNNs, 1s ~50%",SubmissionStatus.COMPLETE,0.67811,0.66468
+57128501,final_B5i.csv,2026-10-13 03:07:07.583000,B5i: B5 sentence rows unchanged; iso rows with 1s group weighted ~53% (val iso +0.004),SubmissionStatus.COMPLETE,0.70986,0.66568
+57111861,final_M2.csv,2026-10-12 15:40:08.500000,"M2: geometric mean of B5, B6n, B6, B2, B4",SubmissionStatus.COMPLETE,0.68945,0.66618
+57111839,final_B6n.csv,2026-10-12 15:39:09.670000,B6n: B5 + day14 3s w3L_s23 w3C_s24 (no new self-training); iso + w3L_s23 w3C_s24,SubmissionStatus.COMPLETE,0.68811,0.66282
+57111833,final_B6.csv,2026-10-12 15:38:58.343000,B6: B5 + day14 3s w3L_s23 w3C_s24 + B5-teacher self-trained uw3L_s21 uw3C_s22; iso + w3L_s23 w3C_s24,SubmissionStatus.COMPLETE,0.67707,0.66182
+57109231,final_B5u.csv,2026-10-12 13:53:58.937000,"B5u: B5 with local 1s members swapped (pfl_s1-3,fe_s4 -> ufl_s1,ufl_s2,ufe_s5,feL_s6); iso = B5",SubmissionStatus.COMPLETE,0.67811,0.68118
+57106021,final_B6a.csv,2026-10-12 11:40:14.477000,"B6a: B5 + local B5-teacher self-trained 1s (ufl_s1-2, ufe_s4-5) + 1s 12-layer feL_s6",SubmissionStatus.COMPLETE,0.68096,0.68618
+57102248,final_B5.csv,2026-10-12 09:06:51.607000,B5: B2 + architecture-diverse w3L_s21 (12 layers d768) and w3C_s22 (CNN width 512); iso 28 originals,SubmissionStatus.COMPLETE,0.70986,0.66568
+57099678,final_M1.csv,2026-10-12 07:28:47.880000,"M1: geometric mean of final_B2, B4, P1, C, P2 probabilities",SubmissionStatus.COMPLETE,0.69612,0.67547
+57099381,final_C.csv,2026-10-12 07:17:48.377000,"C: 27 diverse models all self-trained with teacher final_B2 (tw3*, sw3*, tf7*, sf7e, tfl*, tfe*) + calibrated GPT-2/gpt2-medium a0.5; iso 27 originals",SubmissionStatus.COMPLETE,0.68467,0.62851
+57096287,final_B4.csv,2026-10-12 05:06:18.943000,"B4: B2 with w3e_s14, w3e_s15, w3hf_s4, f7e_s6 replaced by B2-teacher self-trained versions (sw3e_s14/15, sw3h_s4, sf7e_s6)",SubmissionStatus.COMPLETE,0.69612,0.65619
+57088199,final_B3.csv,2026-10-12 00:00:35.367000,B3: B2 + fe_s5 + self-trained pfe_s4/pfe_s5 (local 4090) = 29 sentence models; iso 27 originals,SubmissionStatus.COMPLETE,0.68549,0.66968
+57086803,final_B2.csv,2026-10-11 22:28:03.303000,B2 larger diverse: B1 + pfl_s1-3 (local self-trained) + w3e_s14/15 + w3hf_s4 + f7e_s6 + fe_s4 (26 sentence models) + calibrated GPT-2/gpt2-medium a0.5; iso 26 original models,SubmissionStatus.COMPLETE,0.69834,0.67718
+57084114,final_P1eos.csv,2026-10-11 19:41:01.533000,P1 + sentence-end LM information on the last word of each sentence (lm_fusion --eos),SubmissionStatus.COMPLETE,0.64303,0.68095
+57083970,final_B1.csv,2026-10-11 19:32:19.227000,B1 diverse+self-trained,SubmissionStatus.COMPLETE,0.68145,0.66022
+57079283,final_P3.csv,2026-10-11 16:06:23.197000,"P3: 9 original W members + 9 round-2 self-trained (qw3_s1-6, qf7_s1-3) + calibrated GPT-2/gpt2-medium a0.5; iso 14 original models",SubmissionStatus.COMPLETE,0.67764,0.64222
+57078686,final_P2.csv,2026-10-11 15:40:43.867000,"self-training round 2: all 9 W members fine-tuned with teacher final_P1 (qw3_s1-6, qf7_s1-3) + calibrated GPT-2/gpt2-medium a0.5; iso 14 models",SubmissionStatus.COMPLETE,0.68478,0.65207
+57075005,final_P1noLM.csv,2026-10-11 13:14:12.617000,"same models as final_P1, no LM fusion (teacher already includes LM)",SubmissionStatus.COMPLETE,0.67279,0.67389
+57075001,final_P1.csv,2026-10-11 13:14:06.153000,"self-training round 1: W with w3f_s1-3,f7_s1 replaced by holdout-self-trained pw3_s1-3,pf7_s1 (teacher finalW_calib2_iso14) + calibrated GPT-2/gpt2-medium a0.5",SubmissionStatus.COMPLETE,0.69430,0.66206
+57073038,final_D.csv,2026-10-11 11:54:26.517000,"diverse ensemble D: w3f_s1-8 + w3hf_s1-2 (100 Hz) + f7_s1-3 + f7e_s4 + f_s1 (3s:1s ~2:1), calibrated GPT-2/gpt2-medium a0.5; isolated rows 17 models tau0.7",SubmissionStatus.COMPLETE,0.66362,0.66224
+57066202,finalH_calib2_iso.csv,2026-10-11 07:19:01.713000,"W ensemble + w3hf_s1 (3 s 100 Hz, weight 3/12) + calibrated GPT-2/gpt2-medium a0.5; isolated rows 14 models + w3hf_s1 x3 tau0.7",SubmissionStatus.COMPLETE,0.67362,0.67990
+57032563,finalV_calib2_iso14.csv,2026-10-10 05:45:55.983000,3 s models only (w3f_s1-8) + calibrated GPT-2/gpt2-medium PMI a0.5; isolated rows 14 models tau0.7,SubmissionStatus.COMPLETE,0.65232,0.67277
+57024414,finalW_calib2_iso14.csv,2026-10-10 00:03:16.977000,accepted finalW_calib2 sentence rows; isolated rows from 14 models (3 s + 1 s) heads tau0.7 (iso val 0.445 -> 0.464),SubmissionStatus.COMPLETE,0.67925,0.66001
+57024268,finalY_calib2_t0.3.csv,2026-10-10 00:01:58.210000,same as finalY_calib2_t0 but sentence rows MEG tau0.3,SubmissionStatus.COMPLETE,0.64482,0.66149
+57024257,finalY_calib2_t0.csv,2026-10-10 00:01:51.223000,"14 models (w3f_s1-8 + f7_s1-3 + f_s1-3, 1 s share ~43%) + calibrated GPT-2/gpt2-medium PMI a0.5; isolated rows 14-model heads tau0.7",SubmissionStatus.COMPLETE,0.65001,0.66339
+57008925,finalW_calib2_t0.5.csv,2026-10-09 12:26:59.183000,same as accepted finalW_calib2 but MEG ensemble logit-adjusted tau0.5 on sentence rows (val novel +0.05),SubmissionStatus.COMPLETE,0.66697,0.65907
+56991154,finalX_calib2.csv,2026-10-09 04:31:13.867000,3s-window ensemble w3f_s1-8 + f7_s1-3 + calibrated GPT-2/gpt2-medium PMI a0.5; isolated rows w3f_s1-8 heads tau0.7,SubmissionStatus.COMPLETE,0.66862,0.65601
+56981629,finalW_calib2.csv,2026-10-09 00:40:41.357000,3s-window ensemble + strength-calibrated average of GPT-2 and gpt2-medium PMI (alpha0.5),SubmissionStatus.COMPLETE,0.67925,0.66001
+56980414,finalW_distil_a05.csv,2026-10-09 00:13:44.643000,3s-window ensemble + distilgpt2 PMI alpha0.5,SubmissionStatus.COMPLETE,0.63362,0.67394
+56980401,finalW_gpt2_a07.csv,2026-10-09 00:13:37.343000,3s-window ensemble + GPT-2 PMI alpha0.7,SubmissionStatus.COMPLETE,0.64061,0.66150
+56980397,finalW_gpt2_a03.csv,2026-10-09 00:13:31.860000,3s-window ensemble + GPT-2 PMI alpha0.3,SubmissionStatus.COMPLETE,0.64180,0.68184
+56979270,finalW_gpt2.csv,2026-10-09 00:01:32.743000,3s-window models w3f_s1-6 + f7_s1-3 + GPT-2 PMI a0.5; isolated rows from w3f heads tau0.7,SubmissionStatus.COMPLETE,0.67576,0.67334
+56979247,final_qwen3_14b.csv,2026-10-09 00:01:25.657000,same 9-model ensemble + Qwen3-14B PMI a0.5 [LM comparison],SubmissionStatus.COMPLETE,0.60433,0.63149
+56979209,final_qwen3_8b.csv,2026-10-09 00:01:18.180000,same 9-model ensemble + Qwen3-8B PMI a0.5 [LM comparison],SubmissionStatus.COMPLETE,0.61918,0.60870
+56979180,final_gpt2.csv,2026-10-09 00:01:12.610000,"9-model ensemble (f7x3 Colab, f_s1-3, c5, c2, c7) + GPT-2 PMI a0.5 [LM comparison]",SubmissionStatus.COMPLETE,0.65986,0.68814
+56930771,sub_st1e5_gs05.csv,2026-10-08 02:59:54.433000,self-trained (holdout soft pseudo-labels from final_e5) 5-model ensemble + GPT-2 soft PMI a0.5,SubmissionStatus.COMPLETE,0.64796,0.66204
+56929454,final_e5_gs05.csv,2026-10-08 02:21:14.793000,"final candidate: 5-model ensemble (f_s1-3 full-data, c5, c2) + GPT-2 soft PMI a0.5 on sentences; isolated rows = mean(ctx,local) heads tau0.7",SubmissionStatus.COMPLETE,0.64097,0.66091
+56927523,sub_ef1c5c2_gs05_isoT1.csv,2026-10-08 01:23:23.487000,best (ef1c5c2 gs05) with isolated-word rows ranked by likelihood (tau=1),SubmissionStatus.COMPLETE,0.65645,0.63550
+56927489,sub_e4_gs03.csv,2026-10-08 01:22:13.687000,"sub_e4_gs03: ensemble(f_s1,f_s2,c5,c2) + GPT-2 small soft PMI",SubmissionStatus.COMPLETE,0.64819,0.65487
+56927486,sub_e4_gs05.csv,2026-10-08 01:22:06.273000,"sub_e4_gs05: ensemble(f_s1,f_s2,c5,c2) + GPT-2 small soft PMI",SubmissionStatus.COMPLETE,0.64597,0.65267
+56926495,sub_ef1c5c2_gs05_bi8.csv,2026-10-08 00:40:19.410000,"ensemble(f_s1,c5,c2) + GPT-2 small bidirectional N-best(8) PMI alpha0.5",SubmissionStatus.COMPLETE,0.61942,0.65511
+56925685,sub_ef1c5c2_gs05.csv,2026-10-08 00:12:59.753000,"ensemble(f_s1 full-data, c5, c2) + GPT-2 small soft PMI alpha0.5",SubmissionStatus.COMPLETE,0.65645,0.63550
+56925025,sub_e25t07_qw10.csv,2026-10-08 00:03:06.130000,sub_e25t07_qw10: soft PMI LM fusion alpha1.0,SubmissionStatus.COMPLETE,0.62028,0.64430
+56925009,sub_e25t07_gl10.csv,2026-10-08 00:02:58.727000,sub_e25t07_gl10: soft PMI LM fusion alpha1.0,SubmissionStatus.COMPLETE,0.61813,0.63669
+56924998,sub_c5_gs10.csv,2026-10-08 00:02:51.873000,sub_c5_gs10: soft PMI LM fusion alpha1.0,SubmissionStatus.COMPLETE,0.60200,0.58009
+56923351,sub_e25t07_qw05.csv,2026-10-07 22:47:50.717000,"ens(c2,c5) tau0.7 + Qwen2.5-1.5B left-context soft PMI fusion alpha0.5",SubmissionStatus.COMPLETE,0.62444,0.66005
+56922670,sub_c5_bidir_gpt2s_test.csv,2026-10-07 22:07:30.247000,"c5 + bidirectional whole-sentence GPT-2 small PMI fusion alpha0.5 (1 sample, 1 round)",SubmissionStatus.COMPLETE,0.54429,0.53661
+56922581,sub_c5_tau07.csv,2026-10-07 22:02:39.800000,c5 logit-adjusted: logp - 0.7 log prior (likelihood ranking),SubmissionStatus.COMPLETE,0.58884,0.66060
+56922580,sub_c5_lmpmi05.csv,2026-10-07 22:02:33.240000,c5 + GPT-2 soft PMI fusion alpha0.5 (LM context minus LM marginal),SubmissionStatus.COMPLETE,0.62966,0.64306
+56922359,sub_c5_lm05.csv,2026-10-07 21:48:10.963000,"c5 + GPT-2 (small) closed-vocab LM fusion on sentence rows, alpha0.5 beam64",SubmissionStatus.COMPLETE,0.55530,0.58234
+56922154,sub_c5.csv,2026-10-07 21:34:11.997000,"c5: c2 + repeated-sentence dedup (repeated texts trained as isolated words), novel-val 0.630",SubmissionStatus.COMPLETE,0.58419,0.58784
+56921452,sub_c2.csv,2026-10-07 20:44:03.200000,"c2: same as c1 but 30 epochs, val ctx 0.678",SubmissionStatus.COMPLETE,0.58195,0.62008
+56920852,sub_c1.csv,2026-10-07 20:03:50.667000,"c1: CNN word encoder + 4-layer sentence Transformer (word order only), top-1000 word targets, 16ep, val ctx 0.607",SubmissionStatus.COMPLETE,0.56457,0.53244
+56920348,sub_v1_taum1.csv,2026-10-07 19:36:16.943000,"v1 + natural-frequency prior (logp + log prior), calibration probe",SubmissionStatus.COMPLETE,0.24794,0.28128
+56920263,sub_v1.csv,2026-10-07 19:32:14.363000,"v1: 1D res-CNN on all subj0 runs (155 train runs, 305k vocab epochs), PCA80@125Hz, 30ep, seed0, holdout-run val 0.42",SubmissionStatus.COMPLETE,0.29796,0.32501
+56854591,submission_deep_final.csv,2026-10-05 14:33:40.987000,"Deep expanded temporal-bin linear; subj0 Sherlock1-4, 10 train runs/20538 windows. Fixed S1/S5 development winner; once-only S6/S7 confirmation passed. C=.01, seed20261005; no Broad or test labels. Frozen model4ac435d0; exact CPU reload.",SubmissionStatus.COMPLETE,0.27725,0.29472
+56848866,submission_deep.csv,2026-10-05 09:47:01.057000,"Deep CPU temporal-bin logistic pilot; train subj0 Sherlock1 ses1 only, 0-1s; official pnpl loader; no cross-track data. seed 20261005.",SubmissionStatus.COMPLETE,0.22707,0.19912
