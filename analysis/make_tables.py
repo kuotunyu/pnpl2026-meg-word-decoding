@@ -15,11 +15,11 @@ fmt = lambda x: f"${x:+.3f}$"
 VAL = {"+": "$+$", "-": "$-$", "n/a": "n/a"}
 
 MAIN = ["sentence-context model (redesign)", "closed-vocab LM fusion (PMI)", "Qwen3-8B instead of GPT-2",
-        "N-best hard marginals, no PMI", None,
+        "LM fusion without PMI (N-best)", None,
         "self-training round 1", "LM fusion after self-training", "all members self-trained (one teacher)",
         "sentence-end LM term", "sentence prior correction tau0.3", "word-timing evidence beta0.5", "validation-motivated stack V", None,
         "in-domain LM (807 sentences, seed 0)", "in-domain LM, 3-seed mixture", "in-domain corpus 807 -> 1,368",
-        "in-domain corpus 807 -> 2,103 (adds Qwen; IN1)", "generic candidates, lambda0.15", "candidate decoding (guided pool + LM prior)"]
+        "in-domain corpus 807 -> 2,103 (+ Qwen sentences; IN1)", "generic candidates, lambda0.15", "candidate decoding (guided pool + LM prior)"]
 rows = []
 for c in MAIN:
     if c is None:

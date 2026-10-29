@@ -34,6 +34,8 @@ PNPL_FS=100 python sources/preprocess_w3.py holdout
 
 The seven validation runs (`sources/train.py`) are held out from supervised training, but the PCA sample includes two of them.
 
+Known issue, kept so that the code matches the released checkpoints: `preprocess_w3.py` converts the run length to 125 Hz assuming 50 Hz input (`T125 = (y.shape[1] * 5) // 2`). With `PNPL_FS=100` this doubles the length, so the 100 Hz data keep a few words near the end of a run that have less than 1 s of recording and that the 1 s and 50 Hz data drop. Our 100 Hz models were trained with this behaviour.
+
 ## 2. MEG models
 
 Every ensemble member is a tag. Every run writes `outputs/<tag>/model.pt` and `outputs/<tag>/holdout_logits.npz`.
@@ -43,7 +45,8 @@ Every ensemble member is a tag. Every run writes `outputs/<tag>/model.pt` and `o
 
 | members | command |
 |---|---|
-| pw3_s1-3, pf7_s1 | `python sources/pseudo_ft.py --tag pw3_sN --init w3f_sN --teacher sources/teacher_W.csv --data subj0_pca_w3 --w3aug --seed N` (pf7_s1: `--init f7_s1 --data subj0_pca_epochs --seed 4`) |
+| pw3_s1-3 | `python sources/pseudo_ft.py --tag pw3_sN --init w3f_sN --teacher sources/teacher_W.csv --data subj0_pca_w3 --w3aug --seed N` |
+| pf7_s1 | `python sources/pseudo_ft.py --tag pf7_s1 --init f7_s1 --teacher sources/teacher_W.csv --data subj0_pca_epochs --seed 4` (no `--w3aug`) |
 | rw3_s7, rw3_s8, rw3e_s12, rw3d_s13 | `PNPL_FS=50 python sources/pseudo_ft.py --tag <tag> --init <w3f_s7/w3f_s8/w3ef_s12/w3df_s13> --teacher sources/teacher_P1.csv --data subj0_pca_w3 --w3aug --seed <7/8/12/13>` |
 | rw3h_s1-3 | `PNPL_FS=100 python sources/pseudo_ft.py --tag rw3h_sN --init w3hf_sN --teacher sources/teacher_P1.csv --data subj0_pca_w3h --w3aug --seed 2N` (seeds 21-23) |
 | rf7e_s4, rf7e_s5 | `PNPL_FS=125 python sources/pseudo_ft.py --tag <tag> --init <f7e_s4/f7e_s5> --teacher sources/teacher_P1.csv --data subj0_pca_epochs --seed <14/15>` |
@@ -64,7 +67,7 @@ pw3_s1 pw3_s2 pw3_s3 pf7_s1 f7_s2 f7_s3 rw3_s7 rw3_s8 rw3e_s12 rw3d_s13 rw3h_s1 
 pfl_s1 pfl_s2 pfl_s3 w3e_s14 w3e_s15 w3hf_s4 f7e_s6 fe_s4 w3L_s21 w3C_s22 w3f_s4 w3f_s5 w3f_s6 w3I_s61 w3G_s62 w3I_s63
 ```
 
-**Isolated-word rows** (used by every final submission; repeated tags are up-weighted). These rows appear not to be scored (see the write-up), so this list does not affect any score:
+**Isolated-word rows** of the IN1 submissions in Section 4 (repeated tags are up-weighted; the B9c-based submissions use the isolated rows of `final_B9c` instead). In our checks, changing these rows had no measurable effect on either score (see the write-up):
 ```
 w3f_s1 w3f_s2 w3f_s3 w3f_s4 w3f_s5 w3f_s6 w3f_s7 w3f_s8 w3hf_s1 w3hf_s2 w3hf_s3 w3ef_s12 w3df_s13 w3e_s14 w3e_s15 w3hf_s4 w3L_s21 w3C_s22
 f7_s1 f7_s2 f7_s3 f_s1 f_s2 f_s3 f7e_s4 f7e_s5 f7e_s6 fe_s4   (this 1 s group listed twice)
@@ -73,7 +76,7 @@ f7_s1 f7_s2 f7_s3 f_s1 f_s2 f_s3 f7e_s4 f7e_s5 f7e_s6 fe_s4   (this 1 s group li
 ## 3. In-domain LMs
 
 ```bash
-cp ../../corpora/*.txt outputs/
+mkdir -p outputs && cp ../../corpora/*.txt outputs/
 $PY sources/ft_vocab_lm.py --base gpt2 --corpus vocab_corpus_llm_plus.txt --out outputs/lm_gpt2_llm_plus   # 2,103 sentences
 $PY sources/ft_vocab_lm.py --base gpt2 --corpus vocab_corpus_llm_big.txt  --out outputs/lm_gpt2_llm_big    # 3,742 sentences
 ```
@@ -138,7 +141,7 @@ tectonic main.tex        # main.pdf (released as paper.pdf)
 
 Inputs in `analysis/data/`:
 - `submissions_raw.csv`: Kaggle export of all 99 scored submissions with public and private scores (`kaggle competitions submissions pnpl-competition-2026-deep --csv --page-size 200`), made after the private leaderboard was released. A new export on 29 October 2026 gave the same file names and scores.
-- `public_leaderboard_2026-10-29.csv` (all 91 teams) and `private_leaderboard_top49_2026-10-29.csv` (the first 49 places): leaderboard snapshots saved on 29 October 2026, used only for the ranks. Team names other than ours are removed.
+- `public_leaderboard_2026-10-29.csv` (all 90 ranked teams, plus the hosts' unranked baseline row with rank 0) and `private_leaderboard_top49_2026-10-29.csv` (the first 49 places): leaderboard snapshots saved on 29 October 2026, used only for the ranks. Team names other than ours are removed.
 - `iso_check.json`: for the pairs of submissions that differ only in the isolated-word rows, the largest difference on the sentence rows and the number of isolated rows whose top-10 set differs. It was written by `python iso_check.py ../experiments/20261008_full_subj0_deepnet/outputs` from our submission files; the files of one pair were not kept.
 
 `analyze_lb.py` computes every leaderboard statistic from these files. The following inputs are written into the script by hand, from our dated experiment log (not released): the 30 comparisons with their single or bundle label, the validation direction of each comparison with its date and validation scores, the pairs that differ only in isolated-word rows, and the two final selections (actual: chosen on 16 October; one day earlier: recorded on 15 October). The script's results are therefore conditional on these annotations.

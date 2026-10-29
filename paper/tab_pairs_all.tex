@@ -4,12 +4,12 @@
 \midrule
     1 & sentence-context model (redesign) & \texttt{sub\_v1} & \texttt{sub\_c1} & bundle & $+0.267$ & $+0.207$ & n/a \\
     2 & closed-vocab LM fusion (PMI) & \texttt{sub\_c5} & \texttt{sub\_c5\_lmpmi05} & single & $+0.045$ & $+0.055$ & $+$ \\
-    3 & N-best hard marginals, no PMI & \texttt{sub\_c5\_lmpmi05} & \texttt{sub\_c5\_lm05} & bundle & $-0.074$ & $-0.061$ & n/a \\
+    3 & LM fusion without PMI (N-best) & \texttt{sub\_c5\_lmpmi05} & \texttt{sub\_c5\_lm05} & bundle & $-0.074$ & $-0.061$ & n/a \\
     4 & Qwen3-8B instead of GPT-2 & \texttt{final\_gpt2} & \texttt{final\_qwen3\_8b} & single & $-0.041$ & $-0.079$ & $-$ \\
     5 & 3 s window ensemble & \texttt{final\_gpt2} & \texttt{finalW\_gpt2} & bundle & $+0.016$ & $-0.015$ & n/a \\
     6 & GPT-2-medium added, strength-calibrated & \texttt{finalW\_gpt2} & \texttt{finalW\_calib2} & bundle & $+0.003$ & $-0.013$ & n/a \\
     7 & sentence prior correction $\tau{=}0.5$ & \texttt{finalW\_calib2} & \texttt{finalW\_calib2\_t0.5} & single & $-0.012$ & $-0.001$ & $+$ \\
-    8 & higher 1 s share & \texttt{finalW\_calib2\_iso14} & \texttt{finalY\_calib2\_t0} & bundle & $-0.029$ & $+0.003$ & $+$ \\
+    8 & higher 1 s share & \texttt{finalW\_calib2\_iso14} & \texttt{finalY\_calib2\_t0} & bundle & $-0.029$ & $+0.003$ & n/a \\
     9 & self-training round 1 & \texttt{finalW\_calib2\_iso14} & \texttt{final\_P1} & single & $+0.015$ & $+0.002$ & n/a \\
     10 & LM fusion after self-training & \texttt{final\_P1noLM} & \texttt{final\_P1} & single & $+0.022$ & $-0.012$ & n/a \\
     11 & self-training round 2 (all replaced) & \texttt{final\_P1} & \texttt{final\_P2} & bundle & $-0.010$ & $-0.010$ & n/a \\
@@ -24,11 +24,11 @@
     20 & word-timing evidence $\beta{=}1.0$ & \texttt{final\_B5i} & \texttt{final\_B5d10} & single & $-0.024$ & $-0.008$ & $+$ \\
     21 & input rescaling & \texttt{final\_B5i} & \texttt{final\_B5irs} & single & $-0.007$ & $+0.004$ & n/a \\
     22 & validation-motivated stack V & \texttt{final\_B5i} & \texttt{final\_V} & bundle & $-0.027$ & $+0.022$ & $+$ \\
-    23 & lr-fixed deep members & \texttt{final\_B5i} & \texttt{final\_B8b} & bundle & $-0.011$ & $+0.002$ & n/a \\
+    23 & 12-layer members, lower learning rate & \texttt{final\_B5i} & \texttt{final\_B8b} & bundle & $-0.011$ & $+0.002$ & n/a \\
     24 & in-domain LM (807 sentences, seed 0) & \texttt{final\_B5i} & \texttt{final\_B5i\_L1} & single & $+0.010$ & $-0.038$ & n/a \\
     25 & in-domain LM, 3-seed mixture & \texttt{final\_B5i} & \texttt{final\_B5i\_L1avg} & bundle & $+0.010$ & $-0.012$ & n/a \\
     26 & in-domain corpus 807 $\to$ 1,368 & \texttt{final\_B5i\_L1} & \texttt{final\_B5i\_L3} & single & $-0.010$ & $+0.038$ & n/a \\
-    27 & in-domain corpus 807 $\to$ 2,103 (adds Qwen; IN1) & \texttt{final\_B5i\_L1\_IN1} & \texttt{final\_IN1\_Q\_llm\_plus} & single & $+0.002$ & $+0.018$ & n/a \\
+    27 & in-domain corpus 807 $\to$ 2,103 (+ Qwen sentences; IN1) & \texttt{final\_B5i\_L1\_IN1} & \texttt{final\_IN1\_Q\_llm\_plus} & single & $+0.002$ & $+0.018$ & n/a \\
     28 & in-domain corpus 2,103 $\to$ 3,742 (IN1) & \texttt{final\_IN1\_Q\_llm\_plus} & \texttt{final\_IN1\_Q\_big} & single & $+0.004$ & $+0.007$ & n/a \\
     29 & generic candidates, $\lambda{=}0.15$ & \texttt{final\_IN1\_Q\_llm\_plus} & \texttt{final\_IN1Qp\_SC0.15} & single & $-0.003$ & $+0.012$ & n/a \\
     30 & candidate decoding (guided pool + LM prior) & \texttt{final\_IN1\_Q\_llm\_plus} & \texttt{final\_IN1Qp\_SCGL\_b0.5} & bundle & $+0.009$ & $-0.006$ & n/a \\

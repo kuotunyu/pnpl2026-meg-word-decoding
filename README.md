@@ -2,9 +2,9 @@
 
 This repository contains the code for team `yu_kuo14` in the [PNPL Competition 2026: Deep Track](https://www.kaggle.com/competitions/pnpl-competition-2026-deep). The task is to decode which of 50 common English words a single participant hears from MEG recordings. Submissions are scored by class-balanced top-10 accuracy (BAcc@10, chance = 0.20).
 
-**Kaggle result:** public leaderboard 0.733 (13th of 91 teams); **private leaderboard 0.663 (44th)**. These are Kaggle's standings, not the final competition outcome: the organisers determine the final standings on separate holdout data and plan to announce them by 1 December 2026.
+**Kaggle result:** public leaderboard 0.733 (13th of 90 teams); **private leaderboard 0.663 (44th)**. These are Kaggle's standings, not the final competition outcome: the organisers determine the final standings on separate holdout data and plan to announce them by 1 December 2026.
 
-The late public gains did not transfer to the private split. Four large early changes kept the sign of their effect from public to private; only 10 of 26 later changes did. Among the 60 pre-deadline submissions with public score >= 0.66, the 24 from the last week averaged 0.714 public and 0.648 private, against 0.686 and 0.666 for the earlier ones. Our best private score (0.688) came from an earlier, simpler 9-model ensemble. The 92 isolated-word test rows appear not to be scored in either split.
+The late public gains did not transfer to the private split. Among the 60 pre-deadline submissions with public score >= 0.66, the 24 made after the in-domain LM was introduced (the last two days) averaged 0.714 public and 0.648 private, against 0.686 and 0.666 for the 36 earlier ones. Re-seeding only the fine-tuning of the in-domain LM changed the private score by up to 0.015, more than most effects we tested. Our best private score (0.688) came from an earlier, simpler 9-model ensemble. Changing the 92 isolated-word test rows had no measurable effect on either score.
 
 ![Public vs private scores of our submissions, and the development milestones](analysis/data/fig_overview.png)
 

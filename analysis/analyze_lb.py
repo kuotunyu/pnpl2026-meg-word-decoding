@@ -58,11 +58,17 @@ for th in (0.0, 0.5, 0.6, 0.66, 0.69):
     out[f"corr_pre_ge_{th}"] = [int(m.sum()), round(r, 3), fisher_ci(r, int(m.sum()))]
 st = {k: stage(k) for k in S}
 fam = {}
+arr = {}
 for g in ("meg", "late"):
     ks = [k for k in pre if st[k] == g and pre[k][0] >= 0.66]
-    a = np.array([pre[k][0] for k in ks]); b = np.array([pre[k][1] for k in ks])
-    fam[g] = {"n": len(ks), "mean_pub": round(float(a.mean()), 4), "mean_priv": round(float(b.mean()), 4), "r": round(corr(a, b), 2)}
+    a = np.array([pre[k][0] for k in ks]); b = np.array([pre[k][1] for k in ks]); arr[g] = (a, b)
+    fam[g] = {"n": len(ks), "mean_pub": round(float(a.mean()), 4), "mean_priv": round(float(b.mean()), 4), "r": round(corr(a, b), 2),
+              "r_ci": fisher_ci(corr(a, b), len(ks)), "sd_pub": round(float(a.std(ddof=1)), 4), "sd_priv": round(float(b.std(ddof=1)), 4),
+              "first": min(S[k][2] for k in ks)[:16], "last": max(S[k][2] for k in ks)[:16]}
 out["family_pub_ge_0.66"] = fam
+welch = lambda i: math.sqrt(arr["late"][i].var(ddof=1) / len(arr["late"][i]) + arr["meg"][i].var(ddof=1) / len(arr["meg"][i]))
+out["family_contrast"] = {"d_pub": round(float(arr["late"][0].mean() - arr["meg"][0].mean()), 4), "se_pub": round(welch(0), 4),
+                          "d_priv": round(float(arr["late"][1].mean() - arr["meg"][1].mean()), 4), "se_priv": round(welch(1), 4)}  # nominal
 for g in ("early", "meg", "late"):
     ks = [k for k in pre if st[k] == g]
     out[f"stage_{g}"] = {"n": len(ks), "mean_pub": round(float(np.mean([S[k][0] for k in ks])), 4),
@@ -78,14 +84,20 @@ out["l1_family"] = {"public": [min(S[k][0] for k in L1FAM), max(S[k][0] for k in
 out["distinct_values_pre"] = {"public": len(set(RAW[k][0] for k in pre)), "private": len(set(RAW[k][1] for k in pre)), "n": len(pre)}
 out["repeated_public_0.72001"] = sorted(k for k in pre if RAW[k][0] == Decimal("0.72001"))
 
-# --- seed repeats of one recipe (B5i + GPT-2 fine-tuned on 807 sentences + GPT-2-medium) -----------------------
+# --- seed repeats of one recipe: B5i + GPT-2 fine-tuned on 807 sentences + GPT-2-medium; only the fine-tuning seed of the
+#     in-domain GPT-2 differs, the MEG ensemble is the same (REPORT 10/15 02:50) ------------------------------------------
 SEEDS = ["final_B5i_L1", "final_B5i_L1s1", "final_B5i_L1s2"]
 sp = np.array([S[k][1] for k in SEEDS]); sq = np.array([S[k][0] for k in SEEDS])
-floor = 2 * math.sqrt(2) * float(sp.std(ddof=1))
+sd = float(sp.std(ddof=1))
+floor = 2 * math.sqrt(2) * sd                       # twice the sd of a difference of two independent draws: a rough scale
+d_ref = sp - S["final_B5i"][1]
 out["seed_repeats"] = {"private": [S[k][1] for k in SEEDS], "public": [S[k][0] for k in SEEDS],
-                       "sd_private": round(float(sp.std(ddof=1)), 4), "sd_public": round(float(sq.std(ddof=1)), 4),
+                       "sd_private": round(sd, 4), "sd_public": round(float(sq.std(ddof=1)), 4),
+                       "sd_private_ci95": [round(sd * math.sqrt(2 / 7.3778), 4), round(sd * math.sqrt(2 / 0.050636), 4)],  # chi2, 2 df
                        "mean_private": round(float(sp.mean()), 4), "mixture_private": S["final_B5i_L1avg"][1],
-                       "noise_floor_2sd_diff": round(floor, 3)}
+                       "noise_floor_2sd_diff": round(floor, 3),
+                       "vs_B5i": {"d_priv": [round(float(x), 5) for x in d_ref], "mean": round(float(d_ref.mean()), 4),
+                                  "se": round(sd / math.sqrt(len(SEEDS)), 4)}}
 
 # --- isolated-word-only pairs: identical sentence rows, different isolated rows (checked on the submission files) --
 ISO_ONLY = [("finalW_calib2", "finalW_calib2_iso14"), ("final_B5", "final_B5i"), ("final_B9", "final_B9c"),
@@ -99,12 +111,13 @@ out["iso_only_pairs"] = [[a, b, str(RAW[a][0]), str(RAW[b][0]), str(RAW[a][1]), 
 PAIRS = [
     ("sentence-context model (redesign)", "sub_v1", "sub_c1", "n/a", "bundle", ""),
     ("closed-vocab LM fusion (PMI)", "sub_c5", "sub_c5_lmpmi05", "+", "single", "10/11 16:50 proxy 0.533 -> 0.555"),
-    ("N-best hard marginals, no PMI", "sub_c5_lmpmi05", "sub_c5_lm05", "n/a", "bundle", ""),
+    ("LM fusion without PMI (N-best)", "sub_c5_lmpmi05", "sub_c5_lm05", "n/a", "bundle", ""),
     ("Qwen3-8B instead of GPT-2", "final_gpt2", "final_qwen3_8b", "-", "single", "10/11 16:50 proxy Qwen3-8B 0.52 vs GPT-2 0.555"),
     ("3 s window ensemble", "final_gpt2", "finalW_gpt2", "n/a", "bundle", ""),
     ("GPT-2-medium added, strength-calibrated", "finalW_gpt2", "finalW_calib2", "n/a", "bundle", ""),
     ("sentence prior correction tau0.5", "finalW_calib2", "finalW_calib2_t0.5", "+", "single", "10/09 20:35 novel-sentence 0.668 -> 0.718"),
-    ("higher 1 s share", "finalW_calib2_iso14", "finalY_calib2_t0", "+", "bundle", "10/09 21:40 proxy: 3 s alone 0.525, 3 s + four 1 s models 0.561"),
+    ("higher 1 s share", "finalW_calib2_iso14", "finalY_calib2_t0", "n/a", "bundle",
+     "10/09 21:40 proxy 0.525 -> 0.561 also adds four models; 10/09 20:35 novel-sentence 0.668 -> 0.672 (27% -> 50% 1 s)"),
     ("self-training round 1", "finalW_calib2_iso14", "final_P1", "n/a", "single", ""),
     ("LM fusion after self-training", "final_P1noLM", "final_P1", "n/a", "single", ""),
     ("self-training round 2 (all replaced)", "final_P1", "final_P2", "n/a", "bundle", ""),
@@ -119,16 +132,16 @@ PAIRS = [
     ("word-timing evidence beta1.0", "final_B5i", "final_B5d10", "+", "single", "10/13 20:40 proxy 0.533 -> 0.613"),
     ("input rescaling", "final_B5i", "final_B5irs", "n/a", "single", ""),
     ("validation-motivated stack V", "final_B5i", "final_V", "+", "bundle", "10/14 13:30, built from the tau0.3 and timing results"),
-    ("lr-fixed deep members", "final_B5i", "final_B8b", "n/a", "bundle", ""),
+    ("12-layer members, lower learning rate", "final_B5i", "final_B8b", "n/a", "bundle", ""),
     ("in-domain LM (807 sentences, seed 0)", "final_B5i", "final_B5i_L1", "n/a", "single", ""),
     ("in-domain LM, 3-seed mixture", "final_B5i", "final_B5i_L1avg", "n/a", "bundle", ""),
     ("in-domain corpus 807 -> 1,368", "final_B5i_L1", "final_B5i_L3", "n/a", "single", ""),
-    ("in-domain corpus 807 -> 2,103 (adds Qwen; IN1)", "final_B5i_L1_IN1", "final_IN1_Q_llm_plus", "n/a", "single", ""),
+    ("in-domain corpus 807 -> 2,103 (+ Qwen sentences; IN1)", "final_B5i_L1_IN1", "final_IN1_Q_llm_plus", "n/a", "single", ""),
     ("in-domain corpus 2,103 -> 3,742 (IN1)", "final_IN1_Q_llm_plus", "final_IN1_Q_big", "n/a", "single", ""),
     ("generic candidates, lambda0.15", "final_IN1_Q_llm_plus", "final_IN1Qp_SC0.15", "n/a", "single", ""),
     ("candidate decoding (guided pool + LM prior)", "final_IN1_Q_llm_plus", "final_IN1Qp_SCGL_b0.5", "n/a", "bundle", ""),
 ]
-EARLY_STRUCTURAL = 4                                   # first four pairs: changes made on 7-9 October to a much weaker system
+EARLY_STRUCTURAL = 4                                   # first four pairs: structural changes made on 7-9 October
 order = sorted(pre, key=lambda k: S[k][2])
 best_so_far = {}
 m = -1
@@ -162,6 +175,14 @@ out["later_large_public"] = [[p["change"], p["d_pub_3dp"], p["d_priv_3dp"]] for 
 for th in (0.025, 0.03, 0.035):
     out[f"agree_all_th{th}"] = agree(pairs, th)
 out["n_small_priv_effects"] = [sum(abs(p["d_priv"]) < floor for p in pairs), len(pairs)]
+out["later_floor"] = {"n": len(later), "priv_below": int(sum(abs(p["d_priv"]) < floor for p in later)),
+                      "pub_above": int(sum(abs(p["d_pub"]) >= floor for p in later)),
+                      "both_above": int(sum(abs(p["d_pub"]) >= floor and abs(p["d_priv"]) >= floor for p in later)),
+                      "large_public_priv_below": [int(sum(abs(p["d_priv"]) < floor for p in later if abs(p["d_pub"]) >= 0.03)),
+                                                  len(out["later_large_public"])],
+                      "sd_d_pub": round(float(lp[:, 0].std(ddof=1)), 4), "sd_d_priv": round(float(lp[:, 1].std(ddof=1)), 4)}
+flips = [p for p in pairs if np.sign(p["d_pub"]) != np.sign(p["d_priv"])]
+out["sign_flips_below_floor"] = [int(sum(abs(p["d_priv"]) < floor for p in flips)), len(flips)]
 
 # --- validation vs public ------------------------------------------------------------------------------------
 dis = [p for p in pairs if p["val"] in "+-" and np.sign(p["d_pub"]) != (1 if p["val"] == "+" else -1)]
@@ -177,14 +198,15 @@ def signrank_p(x):
     return round(2 * sum(d <= lo for d in dist) / len(dist), 2)
 
 
-tq = {6: 2.447, 7: 2.365, 8: 2.306}[len(gain) - 1]
+tq = {5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306}[len(gain) - 1]
 se = float(gain.std(ddof=1) / math.sqrt(len(gain)))
 out["disagreements"] = [[p["change"], p["d_pub_3dp"], p["d_priv_3dp"], "validation" if g > 0 else "public", p["evidence"]]
                         for p, g in zip(dis, gain)]
 out["disagree_summary"] = {"n": len(dis), "validation_right": int((gain > 0).sum()), "mean_gain": round(float(gain.mean()), 4),
                            "ci95": [round(float(gain.mean()) - tq * se, 3), round(float(gain.mean()) + tq * se, 3)],
                            "signrank_p": signrank_p(gain), "max_gain": round(float(gain.max()), 4),
-                           "max_loss": round(float(-gain.min()), 4), "below_floor": int((np.abs(gain) < floor).sum())}
+                           "max_loss": round(float(-gain.min()), 4), "below_floor": int((np.abs(gain) < floor).sum()),
+                           "max_abs_gain_5dp": round(float(np.abs(gain).max()), 5), "floor_5dp": round(floor, 5)}
 
 # --- final-selection back-test (pre-deadline submissions only) ------------------------------------------------
 ACTUAL = ["final_AVG_SCGL_Qbig", "final_IN1Qp_SCGL_b0.5", "final_IN1_Q_big", "final_IN1_Q_llm_plus", "final_B9cIN_Qplus",
@@ -213,6 +235,7 @@ x0 = out["select_actual"][0]
 pool = [k for k in pre if pre[k][0] >= 0.66]
 out["backtest_pool_ge_0.66"] = exact_best_of_10(pool, x0)
 out["backtest_late_family"] = exact_best_of_10([k for k in pool if st[k] == "late"], x0)
+out["backtest_late_family"]["n_above_actual"] = int(sum(pre[k][1] > x0 for k in pool if st[k] == "late"))
 out["backtest_threshold_sensitivity"] = {th: exact_best_of_10([k for k in pre if pre[k][0] >= th], x0) for th in (0.64, 0.65, 0.66, 0.67, 0.68)}
 random.seed(0)
 draws = np.array([best(random.sample(pool, 10))[0] for _ in range(20000)])
@@ -225,7 +248,9 @@ priv_lb = [float(r["score"]) for r in csv.DictReader(open(H / "data/private_lead
 pub_lb = list(csv.DictReader(open(H / "data/public_leaderboard_2026-10-29.csv", encoding="utf-8")))
 rank_of = lambda x: 1 + sum(s > x for s in priv_lb)
 out["ranks"] = {"private_actual": rank_of(x0), "private_if_V": rank_of(out["select_earlier"][0]),
-                "public": int([r["rank"] for r in pub_lb if r["team"] == "yu_kuo14"][0]), "teams": len(pub_lb)}
+                "public": int([r["rank"] for r in pub_lb if r["team"] == "yu_kuo14"][0]),
+                "teams": sum(int(r["rank"]) > 0 for r in pub_lb),                  # rank 0 = the host's unranked baseline row
+                "unranked_rows": sum(int(r["rank"]) == 0 for r in pub_lb)}
 
 json.dump(out, open(H / "data/analysis.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 print(json.dumps({k: v for k, v in out.items() if k not in ("pairs", "selections")}, indent=1, ensure_ascii=False))
@@ -237,7 +262,7 @@ for s_ in ("axes.spines.top", "axes.spines.right"):
     plt.rcParams[s_] = False
 
 # Figure 1: system overview
-fig, ax = plt.subplots(figsize=(5.5, 1.45)); ax.set_xlim(0, 10); ax.set_ylim(0, 2.25); ax.axis("off")
+fig, ax = plt.subplots(figsize=(5.5, 1.32)); ax.set_xlim(-0.12, 10.12); ax.set_ylim(0, 2.25); ax.axis("off")
 B = [(0.0, "MEG word\nepochs", "#E8EEF7", "-"), (1.7, "CNN word\nencoder", "#E8EEF7", "-"),
      (3.4, "sentence\nTransformer\n(~30 models)", "#E8EEF7", "-"), (5.1, "closed-vocab\nLM fusion", "#FBEEE6", "-"),
      (6.8, "candidate\ndecoding", "#FBE3E3", "--"), (8.5, "50-way\nprobabilities", "#F2F2F2", "-")]
@@ -248,22 +273,22 @@ for x, t, c, ls in B:
 for (x, *_), (x2, *__) in zip(B[:-1], B[1:]):
     ax.annotate("", xy=(x2 - 0.02, y + h / 2), xytext=(x + w + 0.02, y + h / 2), arrowprops=dict(arrowstyle="->", lw=0.8, color="0.3"))
 ax.text(3.0, 0.18, "self-training on unlabelled test MEG", ha="center", fontsize=7, color="0.3", style="italic")
-ax.text(5.85, 2.05, "GPT-2 + GPT-2-medium; in-domain GPT-2 added in the last week", ha="center", fontsize=7, color="#B5651D")
-ax.text(7.55, 0.18, "added in the last week", ha="center", fontsize=7, color="#C44E52", style="italic")
+ax.text(5.85, 2.05, "GPT-2 + GPT-2-medium; in-domain GPT-2 added in the last two days", ha="center", fontsize=7, color="#B5651D")
+ax.text(7.55, 0.18, "added in the last two days", ha="center", fontsize=7, color="#C44E52", style="italic")
 fig.tight_layout(pad=0.1); fig.savefig(OUT / "fig_system.pdf"); fig.savefig(H / "data/fig_system.png", dpi=130)
 
 # Figure 2: (a) public vs private of the 95 pre-deadline submissions, (b) numbered milestones
 col = {"early": "#9E9E9E", "meg": "#4C72B0", "late": "#DD8452"}
-fig, (a1, a2) = plt.subplots(1, 2, figsize=(5.5, 2.6), gridspec_kw={"width_ratios": [1.15, 1]})
-for g, lab_ in (("meg", "before the in-domain LM"), ("late", "after the in-domain LM")):
+fig, (a1, a2) = plt.subplots(1, 2, figsize=(5.5, 2.25), gridspec_kw={"width_ratios": [1.15, 1]})
+for g, lab_, mk in (("meg", "before the in-domain LM", "o"), ("late", "after the in-domain LM", "s")):
     ks = [k for k in pre if st[k] == g]
-    a1.scatter([S[k][0] for k in ks], [S[k][1] for k in ks], s=12, c=col[g], label=lab_, alpha=0.85, edgecolors="none")
+    a1.scatter([S[k][0] for k in ks], [S[k][1] for k in ks], s=12, c=col[g], marker=mk, label=lab_, alpha=0.85, edgecolors="none")
 a1.scatter([S[k][0] for k in ACTUAL], [S[k][1] for k in ACTUAL], s=42, facecolors="none", edgecolors="k", linewidths=0.8, label="final selection")
 for k, t, off in (("final_V", "V", (4, 2)), ("final_gpt2", "best private", (-30, 6))):
     a1.annotate(t, (S[k][0], S[k][1]), xytext=off, textcoords="offset points", fontsize=7)
 lim = (0.52, 0.745); a1.plot(lim, lim, ls=":", c="0.6", lw=0.8)
 a1.set_xlim(lim); a1.set_ylim(0.52, 0.705); a1.set_xlabel("public BAcc@10"); a1.set_ylabel("private BAcc@10")
-a1.legend(fontsize=6.5, loc="lower right", frameon=False, handletextpad=0.2); a1.set_title("(a) 91 pre-deadline submissions", fontsize=7.5)
+a1.legend(fontsize=7, loc="lower right", frameon=False, handletextpad=0.2); a1.set_title("(a) 91 pre-deadline submissions", fontsize=7.5)
 M = [("submission_deep_final", "linear baseline"), ("sub_v1", "per-word CNN"), ("sub_c1", "sentence Transformer"),
      ("sub_c5", "+ repeated-sentence handling"), ("sub_c5_lmpmi05", "+ closed-vocab LM fusion"),
      ("final_gpt2", "9-model ensemble (best private)"), ("finalW_calib2", "3 s windows, LM calibration"),
@@ -273,20 +298,20 @@ xs = np.arange(1, len(M) + 1)
 a2.plot(xs, [S[k][0] for k, _ in M], "o-", c="#4C72B0", ms=3, lw=1.1, label="public")
 a2.plot(xs, [S[k][1] for k, _ in M], "s-", c="#C44E52", ms=3, lw=1.1, label="private")
 a2.set_xticks(xs); a2.set_xlabel("milestone (see caption)"); a2.set_ylabel("BAcc@10")
-a2.legend(fontsize=6.5, frameon=False, loc="lower right"); a2.set_title("(b) development milestones", fontsize=7.5)
+a2.legend(fontsize=7, frameon=False, loc="lower right"); a2.set_title("(b) development milestones", fontsize=7.5)
 fig.tight_layout(); fig.savefig(OUT / "fig_overview.pdf"); fig.savefig(H / "data/fig_overview.png", dpi=130)
 out_m = [t for _, t in M]
 
 # Figure 3: (a) paired effects, (b) selection back-test
-fig, (b1, b2) = plt.subplots(1, 2, figsize=(5.5, 2.6), gridspec_kw={"width_ratios": [1.15, 1]})
-b1.axvspan(-0.03, 0.03, color="0.92", zorder=0); b1.axhline(0, c="0.6", lw=0.6); b1.axvline(0, c="0.6", lw=0.6)
+fig, (b1, b2) = plt.subplots(1, 2, figsize=(5.5, 2.35), gridspec_kw={"width_ratios": [1.15, 1]})
+b1.axvspan(-0.03, 0.03, color="0.93", zorder=0); b1.axhspan(-floor, floor, color="0.86", zorder=0, lw=0)
+b1.axhline(0, c="0.6", lw=0.6); b1.axvline(0, c="0.6", lw=0.6)
+KEPT, FLIP = "#1F3A68", "#E8686B"                              # dark and light, so the two stay distinct in grayscale
 for p in pairs:
     if abs(p["d_pub"]) > 0.2:
         continue
-    c = "#C44E52" if np.sign(p["d_pub"]) != np.sign(p["d_priv"]) else "#4C72B0"
-    mk = "o" if p["kind"] == "single" else "^"
-    tiny = abs(p["d_priv"]) < 0.005
-    b1.scatter(p["d_pub"], p["d_priv"], marker=mk, s=16, facecolors="none" if tiny else c, edgecolors=c, linewidths=0.8)
+    c = FLIP if np.sign(p["d_pub"]) != np.sign(p["d_priv"]) else KEPT
+    b1.scatter(p["d_pub"], p["d_priv"], marker="o" if p["kind"] == "single" else "^", s=16, c=c, edgecolors="none")
 NOTE = {"closed-vocab LM fusion (PMI)": ("LM fusion", (-40, -3)), "in-domain LM (807 sentences, seed 0)": ("in-domain LM", (-58, -3)),
         "in-domain corpus 807 -> 1,368": ("larger corpus", (4, -2)), "sentence-end LM term": ("sentence end", (-28, 5)),
         "validation-motivated stack V": ("V", (3, 3)), "Qwen3-8B instead of GPT-2": ("Qwen3-8B", (5, 2))}
@@ -294,17 +319,16 @@ for p in pairs:
     if p["change"] in NOTE:
         t, off = NOTE[p["change"]]
         b1.annotate(t, (p["d_pub"], p["d_priv"]), xytext=off, textcoords="offset points", fontsize=6.5)
-b1.legend(handles=[Line2D([], [], ls="", marker="o", c="#4C72B0", ms=4, label="sign kept"),
-                   Line2D([], [], ls="", marker="o", c="#C44E52", ms=4, label="sign flipped"),
-                   Line2D([], [], ls="", marker="^", c="0.5", ms=4, label="bundle"),
-                   Line2D([], [], ls="", marker="o", mfc="none", mec="0.5", ms=4, label="|private| < 0.005")],
-          fontsize=6, loc="lower right", frameon=False, handletextpad=0.2)
+b1.legend(handles=[Line2D([], [], ls="", marker="o", c=KEPT, ms=4, label="sign kept"),
+                   Line2D([], [], ls="", marker="o", c=FLIP, ms=4, label="sign flipped"),
+                   Line2D([], [], ls="", marker="^", c="0.5", ms=4, label="bundle")],
+          fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=3, frameon=False, handletextpad=0.1, columnspacing=0.8)
 b1.set_xlabel(r"$\Delta$ public"); b1.set_ylabel(r"$\Delta$ private"); b1.set_title("(a) reference-variant comparisons", fontsize=7.5)
 b2.hist(draws, bins=np.arange(0.655, 0.6905, 0.0025), color="#4C72B0", alpha=0.6, label="10 random submissions")
-for v, t, c, ls in ((x0, "actual selection", "#C44E52", "--"), (out["select_top10_public_not_late"][0], "top-10 public, no late subs.", "0.3", ":"),
+for v, t, c, ls in ((x0, "actual selection", "#C44E52", "--"), (out["select_top10_public_not_late"][0], "top-10 public before in-domain LM", "0.3", ":"),
                     (out["select_earlier"][0], "day-before selection", "#2E8B57", "-.")):
     b2.axvline(v, c=c, lw=1.2, ls=ls, label=t)
-b2.legend(fontsize=6, frameon=False, loc="upper left"); b2.set_ylim(0, 8200)
+b2.legend(fontsize=7, frameon=False, loc="upper left"); b2.set_ylim(0, 9000)
 b2.set_xlabel("best private of ten"); b2.set_ylabel("random draws"); b2.set_title("(b) final-selection back-test", fontsize=7.5)
 fig.tight_layout(); fig.savefig(OUT / "fig_pairs.pdf"); fig.savefig(H / "data/fig_pairs.png", dpi=130)
 json.dump(out_m, open(H / "data/milestones.json", "w", encoding="utf-8"), ensure_ascii=False)

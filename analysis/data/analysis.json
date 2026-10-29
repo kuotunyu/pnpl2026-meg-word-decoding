@@ -52,14 +52,36 @@
    "n": 36,
    "mean_pub": 0.686,
    "mean_priv": 0.6658,
-   "r": 0.01
+   "r": 0.01,
+   "r_ci": [
+    -0.32,
+    0.34
+   ],
+   "sd_pub": 0.0116,
+   "sd_priv": 0.0116,
+   "first": "2026-10-09 00:01",
+   "last": "2026-10-14 04:14"
   },
   "late": {
    "n": 24,
    "mean_pub": 0.7138,
    "mean_priv": 0.6479,
-   "r": 0.17
+   "r": 0.17,
+   "r_ci": [
+    -0.25,
+    0.53
+   ],
+   "sd_pub": 0.0135,
+   "sd_priv": 0.0149,
+   "first": "2026-10-14 16:09",
+   "last": "2026-10-16 02:22"
   }
+ },
+ "family_contrast": {
+  "d_pub": 0.0278,
+  "se_pub": 0.0034,
+  "d_priv": -0.0179,
+  "se_priv": 0.0036
  },
  "stage_early": {
   "n": 4,
@@ -131,9 +153,22 @@
   ],
   "sd_private": 0.0079,
   "sd_public": 0.0068,
+  "sd_private_ci95": [
+   0.0041,
+   0.0497
+  ],
   "mean_private": 0.6331,
   "mixture_private": 0.65374,
-  "noise_floor_2sd_diff": 0.022
+  "noise_floor_2sd_diff": 0.022,
+  "vs_B5i": {
+   "d_priv": [
+    -0.03848,
+    -0.0236,
+    -0.0357
+   ],
+   "mean": -0.0326,
+   "se": 0.0046
+  }
  },
  "iso_only_pairs": [
   [
@@ -197,7 +232,7 @@
    "ref_was_public_max": true
   },
   {
-   "change": "N-best hard marginals, no PMI",
+   "change": "LM fusion without PMI (N-best)",
    "base": "sub_c5_lmpmi05",
    "variant": "sub_c5_lm05",
    "d_pub": -0.07436,
@@ -269,9 +304,9 @@
    "d_priv": 0.00338,
    "d_pub_3dp": -0.029,
    "d_priv_3dp": 0.003,
-   "val": "+",
+   "val": "n/a",
    "kind": "bundle",
-   "evidence": "10/09 21:40 proxy: 3 s alone 0.525, 3 s + four 1 s models 0.561",
+   "evidence": "10/09 21:40 proxy 0.525 -> 0.561 also adds four models; 10/09 20:35 novel-sentence 0.668 -> 0.672 (27% -> 50% 1 s)",
    "ref_was_public_max": true
   },
   {
@@ -457,7 +492,7 @@
    "ref_was_public_max": true
   },
   {
-   "change": "lr-fixed deep members",
+   "change": "12-layer members, lower learning rate",
    "base": "final_B5i",
    "variant": "final_B8b",
    "d_pub": -0.01071,
@@ -509,7 +544,7 @@
    "ref_was_public_max": true
   },
   {
-   "change": "in-domain corpus 807 -> 2,103 (adds Qwen; IN1)",
+   "change": "in-domain corpus 807 -> 2,103 (+ Qwen sentences; IN1)",
    "base": "final_B5i_L1_IN1",
    "variant": "final_IN1_Q_llm_plus",
    "d_pub": 0.00222,
@@ -677,6 +712,22 @@
   23,
   30
  ],
+ "later_floor": {
+  "n": 26,
+  "priv_below": 23,
+  "pub_above": 8,
+  "both_above": 0,
+  "large_public_priv_below": [
+   4,
+   4
+  ],
+  "sd_d_pub": 0.0213,
+  "sd_d_priv": 0.0187
+ },
+ "sign_flips_below_floor": [
+  14,
+  16
+ ],
  "disagreements": [
   [
    "sentence prior correction tau0.5",
@@ -684,13 +735,6 @@
    -0.001,
    "public",
    "10/09 20:35 novel-sentence 0.668 -> 0.718"
-  ],
-  [
-   "higher 1 s share",
-   -0.029,
-   0.003,
-   "validation",
-   "10/09 21:40 proxy: 3 s alone 0.525, 3 s + four 1 s models 0.561"
   ],
   [
    "wide CNN instead of 12-layer",
@@ -729,17 +773,19 @@
   ]
  ],
  "disagree_summary": {
-  "n": 7,
-  "validation_right": 3,
+  "n": 6,
+  "validation_right": 2,
   "mean_gain": 0.0031,
   "ci95": [
-   -0.008,
-   0.014
+   -0.011,
+   0.017
   ],
-  "signrank_p": 0.81,
+  "signrank_p": 1.0,
   "max_gain": 0.022,
   "max_loss": 0.0103,
-  "below_floor": 7
+  "below_floor": 6,
+  "max_abs_gain_5dp": 0.02199,
+  "floor_5dp": 0.02238
  },
  "selections": {
   "actual": [
@@ -802,7 +848,8 @@
   "pool": 24,
   "p_le_actual": 0.0942,
   "expected_best": 0.6717,
-  "pool_max": 0.67704
+  "pool_max": 0.67704,
+  "n_above_actual": 4
  },
  "backtest_threshold_sensitivity": {
   "0.64": {
@@ -864,6 +911,7 @@
   "private_actual": 44,
   "private_if_V": 34,
   "public": 13,
-  "teams": 91
+  "teams": 90,
+  "unranked_rows": 1
  }
 }
