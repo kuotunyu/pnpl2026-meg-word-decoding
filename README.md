@@ -4,7 +4,7 @@ This repository contains the code for team `yu_kuo14` in the [PNPL Competition 2
 
 **Result:** public leaderboard 0.733 (13th of 90 teams); **private leaderboard 0.663 (44th of 91)**. Kaggle rankings are provisional until the organisers' verification.
 
-The late language-side gains did not transfer to the private split: among submissions with public score >= 0.66 the public and private scores are negatively correlated (r = -0.38), and our best private score (0.688) came from an earlier, simpler system. `analysis/` contains the Kaggle export of all 99 submissions (public and private scores) and the script that computes every number in the write-up.
+The late public gains did not transfer to the private split: among the 60 pre-deadline submissions with public score >= 0.66 the public and private scores are negatively correlated (r = -0.37), our best private score (0.688) came from an earlier, simpler system, and the language-side variants with the highest public scores were among the lowest on private. The 92 isolated-word test rows appear not to be scored in either split. `analysis/` contains the Kaggle export of all 99 submissions (public and private scores) and the script that computes every number in the write-up.
 
 A workshop write-up is in preparation (due 1 December 2026) and will be added under `paper/`.
 
