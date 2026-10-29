@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+plt.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})   # embedded TrueType, no Type 3 (template requirement)
 
 H = Path(__file__).resolve().parent
 rows = list(csv.DictReader(open(H / "data/submissions_raw.csv", encoding="utf-8")))
