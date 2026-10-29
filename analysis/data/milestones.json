@@ -1,0 +1,1 @@
+["linear baseline", "per-word CNN", "sentence Transformer", "+ repeated-sentence handling", "+ closed-vocab LM fusion", "9-model ensemble (best private)", "3 s windows, LM calibration", "+ self-training", "diverse ensemble B5", "+ in-domain LM (807, seed 0)", "IN1 + LM on 3,742 sentences", "+ candidate decoding"]

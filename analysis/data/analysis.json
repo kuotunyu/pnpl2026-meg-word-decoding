@@ -1,110 +1,139 @@
 {
  "n_all": 99,
  "n_pre_deadline": 95,
- "corr_pre_pub_ge_0.0": [
-  95,
-  0.918
+ "post_deadline": [
+  "abl_A1_gen_b0",
+  "abl_A2_gen_b05",
+  "abl_A3_gui_b0",
+  "abl_A5_lmonly"
  ],
- "corr_pre_pub_ge_0.5": [
+ "corr_pre_ge_0.0": [
+  95,
+  0.918,
+  [
+   0.88,
+   0.94
+  ]
+ ],
+ "corr_pre_ge_0.5": [
   91,
-  0.503
+  0.503,
+  [
+   0.33,
+   0.64
+  ]
  ],
- "corr_pre_pub_ge_0.6": [
+ "corr_pre_ge_0.6": [
   85,
-  0.106
+  0.106,
+  [
+   -0.11,
+   0.31
+  ]
  ],
- "corr_pre_pub_ge_0.66": [
+ "corr_pre_ge_0.66": [
   60,
-  -0.373
+  -0.373,
+  [
+   -0.57,
+   -0.13
+  ]
  ],
- "corr_pre_pub_ge_0.69": [
+ "corr_pre_ge_0.69": [
   32,
-  -0.531
+  -0.531,
+  [
+   -0.74,
+   -0.22
+  ]
  ],
- "corr_all_pub_ge_0.0": [
-  99,
-  0.913
- ],
- "corr_all_pub_ge_0.5": [
-  95,
-  0.483
- ],
- "corr_all_pub_ge_0.6": [
-  89,
-  0.079
- ],
- "corr_all_pub_ge_0.66": [
-  64,
-  -0.375
- ],
- "corr_all_pub_ge_0.69": [
-  36,
-  -0.438
- ],
+ "family_pub_ge_0.66": {
+  "meg": {
+   "n": 36,
+   "mean_pub": 0.686,
+   "mean_priv": 0.6658,
+   "r": 0.01
+  },
+  "late": {
+   "n": 24,
+   "mean_pub": 0.7138,
+   "mean_priv": 0.6479,
+   "r": 0.17
+  }
+ },
  "stage_early": {
   "n": 4,
   "mean_pub": 0.2626,
-  "mean_priv": 0.275,
-  "min_priv": [
-   0.19912,
-   "submission_deep"
-  ],
-  "max_priv": [
-   0.32501,
-   "sub_v1"
-  ]
+  "mean_priv": 0.275
  },
  "stage_meg": {
   "n": 66,
   "mean_pub": 0.6579,
-  "mean_priv": 0.6538,
-  "min_priv": [
-   0.53244,
-   "sub_c1"
-  ],
-  "max_priv": [
-   0.68814,
-   "final_gpt2"
-  ]
+  "mean_priv": 0.6538
  },
- "stage_inlm_only": {
-  "n": 19,
-  "mean_pub": 0.7076,
-  "mean_priv": 0.6485,
-  "min_priv": [
-   0.6243,
-   "final_B5i_L5"
-  ],
-  "max_priv": [
-   0.67704,
-   "final_IN1_mix3"
-  ]
- },
- "stage_cand": {
-  "n": 6,
-  "mean_pub": 0.7216,
-  "mean_priv": 0.6478,
-  "min_priv": [
-   0.64146,
-   "final_IN1_Q_big_SCG2L_l0.5"
-  ],
-  "max_priv": [
-   0.66304,
-   "final_IN1Qp_SC0.15"
-  ]
- },
- "stage_language_side": {
+ "stage_late": {
   "n": 25,
   "mean_pub": 0.7109,
-  "mean_priv": 0.6484,
-  "min_priv": [
+  "mean_priv": 0.6484
+ },
+ "inlm_private_range": [
+  [
    0.6243,
    "final_B5i_L5"
   ],
-  "max_priv": [
+  [
    0.67704,
    "final_IN1_mix3"
+  ],
+  19
+ ],
+ "qwen_only_vs_plus": {
+  "qwen_1575": [
+   0.71301,
+   0.67371
+  ],
+  "qwen_plus_claude_2103": [
+   0.72401,
+   0.65137
+  ],
+  "d_priv": -0.02234
+ },
+ "l1_family": {
+  "public": [
+   0.71893,
+   0.72179
+  ],
+  "private": [
+   0.6272,
+   0.63618
   ]
+ },
+ "distinct_values_pre": {
+  "public": 81,
+  "private": 90,
+  "n": 95
+ },
+ "repeated_public_0.72001": [
+  "final_B5i_L1",
+  "final_B5i_L1_IN2",
+  "final_B5i_L1avg"
+ ],
+ "seed_repeats": {
+  "private": [
+   0.6272,
+   0.64208,
+   0.62998
+  ],
+  "public": [
+   0.72001,
+   0.70779,
+   0.71893
+  ],
+  "sd_private": 0.0079,
+  "sd_public": 0.0068,
+  "mean_private": 0.6331,
+  "mixture_private": 0.65374,
+  "noise_floor_2sd_diff": 0.022
  },
  "iso_only_pairs": [
   [
@@ -150,7 +179,9 @@
    "d_pub_3dp": 0.267,
    "d_priv_3dp": 0.207,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "closed-vocab LM fusion (PMI)",
@@ -161,10 +192,12 @@
    "d_pub_3dp": 0.045,
    "d_priv_3dp": 0.055,
    "val": "+",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/11 16:50 proxy 0.533 -> 0.555",
+   "ref_was_public_max": true
   },
   {
-   "change": "N-best hard marginals instead of soft PMI",
+   "change": "N-best hard marginals, no PMI",
    "base": "sub_c5_lmpmi05",
    "variant": "sub_c5_lm05",
    "d_pub": -0.07436,
@@ -172,7 +205,9 @@
    "d_pub_3dp": -0.074,
    "d_priv_3dp": -0.061,
    "val": "n/a",
-   "kind": "single"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "Qwen3-8B instead of GPT-2",
@@ -183,7 +218,9 @@
    "d_pub_3dp": -0.041,
    "d_priv_3dp": -0.079,
    "val": "-",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/11 16:50 proxy Qwen3-8B 0.52 vs GPT-2 0.555",
+   "ref_was_public_max": true
   },
   {
    "change": "3 s window ensemble",
@@ -194,10 +231,12 @@
    "d_pub_3dp": 0.016,
    "d_priv_3dp": -0.015,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
-   "change": "LM strength calibration (+ GPT-2-medium)",
+   "change": "GPT-2-medium added, strength-calibrated",
    "base": "finalW_gpt2",
    "variant": "finalW_calib2",
    "d_pub": 0.00349,
@@ -205,7 +244,9 @@
    "d_pub_3dp": 0.003,
    "d_priv_3dp": -0.013,
    "val": "n/a",
-   "kind": "single"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "sentence prior correction tau0.5",
@@ -216,7 +257,9 @@
    "d_pub_3dp": -0.012,
    "d_priv_3dp": -0.001,
    "val": "+",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/09 20:35 novel-sentence 0.668 -> 0.718",
+   "ref_was_public_max": true
   },
   {
    "change": "higher 1 s share",
@@ -227,7 +270,9 @@
    "d_pub_3dp": -0.029,
    "d_priv_3dp": 0.003,
    "val": "+",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "10/09 21:40 proxy: 3 s alone 0.525, 3 s + four 1 s models 0.561",
+   "ref_was_public_max": true
   },
   {
    "change": "self-training round 1",
@@ -238,7 +283,9 @@
    "d_pub_3dp": 0.015,
    "d_priv_3dp": 0.002,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "LM fusion after self-training",
@@ -249,7 +296,9 @@
    "d_pub_3dp": 0.022,
    "d_priv_3dp": -0.012,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": false
   },
   {
    "change": "self-training round 2 (all replaced)",
@@ -260,7 +309,9 @@
    "d_pub_3dp": -0.01,
    "d_priv_3dp": -0.01,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "sentence-end LM term",
@@ -271,7 +322,9 @@
    "d_pub_3dp": -0.051,
    "d_priv_3dp": 0.019,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "larger diverse ensemble",
@@ -282,7 +335,9 @@
    "d_pub_3dp": 0.004,
    "d_priv_3dp": 0.015,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "12-layer + wide-CNN members",
@@ -293,7 +348,9 @@
    "d_pub_3dp": 0.012,
    "d_priv_3dp": -0.012,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "all members self-trained (one teacher)",
@@ -304,7 +361,9 @@
    "d_pub_3dp": -0.014,
    "d_priv_3dp": -0.049,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "more 1 s members",
@@ -314,8 +373,10 @@
    "d_priv": 0.0205,
    "d_pub_3dp": -0.029,
    "d_priv_3dp": 0.021,
-   "val": "+",
-   "kind": "bundle"
+   "val": "n/a",
+   "kind": "bundle",
+   "evidence": "conflicting: proxy favoured more 1 s, novel-sentence did not (10/11 16:00)",
+   "ref_was_public_max": true
   },
   {
    "change": "wide CNN instead of 12-layer",
@@ -326,7 +387,9 @@
    "d_pub_3dp": -0.032,
    "d_priv_3dp": -0.001,
    "val": "+",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "10/13 11:20 proxy +0.020 for the wide CNN",
+   "ref_was_public_max": true
   },
   {
    "change": "sentence prior correction tau0.3",
@@ -337,7 +400,9 @@
    "d_pub_3dp": -0.037,
    "d_priv_3dp": 0.017,
    "val": "+",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/09 21:00 proxy 0.558 -> 0.592",
+   "ref_was_public_max": true
   },
   {
    "change": "word-timing evidence beta0.5",
@@ -348,7 +413,9 @@
    "d_pub_3dp": -0.06,
    "d_priv_3dp": -0.01,
    "val": "+",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/13 20:40 proxy 0.533 -> 0.603",
+   "ref_was_public_max": true
   },
   {
    "change": "word-timing evidence beta1.0",
@@ -359,7 +426,9 @@
    "d_pub_3dp": -0.024,
    "d_priv_3dp": -0.008,
    "val": "+",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "10/13 20:40 proxy 0.533 -> 0.613",
+   "ref_was_public_max": true
   },
   {
    "change": "input rescaling",
@@ -370,7 +439,9 @@
    "d_pub_3dp": -0.007,
    "d_priv_3dp": 0.004,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "validation-motivated stack V",
@@ -381,7 +452,9 @@
    "d_pub_3dp": -0.027,
    "d_priv_3dp": 0.022,
    "val": "+",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "10/14 13:30, built from the tau0.3 and timing results",
+   "ref_was_public_max": true
   },
   {
    "change": "lr-fixed deep members",
@@ -392,10 +465,12 @@
    "d_pub_3dp": -0.011,
    "d_priv_3dp": 0.002,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
-   "change": "in-domain LM (807 sentences)",
+   "change": "in-domain LM (807 sentences, seed 0)",
    "base": "final_B5i",
    "variant": "final_B5i_L1",
    "d_pub": 0.01015,
@@ -403,7 +478,9 @@
    "d_pub_3dp": 0.01,
    "d_priv_3dp": -0.038,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "in-domain LM, 3-seed mixture",
@@ -414,7 +491,9 @@
    "d_pub_3dp": 0.01,
    "d_priv_3dp": -0.012,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "in-domain corpus 807 -> 1,368",
@@ -425,10 +504,12 @@
    "d_pub_3dp": -0.01,
    "d_priv_3dp": 0.038,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
-   "change": "in-domain corpus 807 -> 2,103 (IN1)",
+   "change": "in-domain corpus 807 -> 2,103 (adds Qwen; IN1)",
    "base": "final_B5i_L1_IN1",
    "variant": "final_IN1_Q_llm_plus",
    "d_pub": 0.00222,
@@ -436,7 +517,9 @@
    "d_pub_3dp": 0.002,
    "d_priv_3dp": 0.018,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "in-domain corpus 2,103 -> 3,742 (IN1)",
@@ -447,7 +530,9 @@
    "d_pub_3dp": 0.004,
    "d_priv_3dp": 0.007,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "generic candidates, lambda0.15",
@@ -458,7 +543,9 @@
    "d_pub_3dp": -0.003,
    "d_priv_3dp": 0.012,
    "val": "n/a",
-   "kind": "single"
+   "kind": "single",
+   "evidence": "",
+   "ref_was_public_max": true
   },
   {
    "change": "candidate decoding (guided pool + LM prior)",
@@ -469,12 +556,68 @@
    "d_pub_3dp": 0.009,
    "d_priv_3dp": -0.006,
    "val": "n/a",
-   "kind": "bundle"
+   "kind": "bundle",
+   "evidence": "",
+   "ref_was_public_max": true
   }
  ],
  "n_pairs": [
   30,
-  17
+  15,
+  15
+ ],
+ "refs_running_public_max": [
+  29,
+  30
+ ],
+ "agree_early_structural": [
+  4,
+  4,
+  [
+   0.51,
+   1.0
+  ]
+ ],
+ "agree_later": [
+  10,
+  26,
+  [
+   0.22,
+   0.57
+  ]
+ ],
+ "corr_later": [
+  -0.29,
+  [
+   -0.61,
+   0.11
+  ]
+ ],
+ "later_mean_deltas": [
+  -0.0095,
+  -0.0003
+ ],
+ "later_large_public": [
+  [
+   "sentence-end LM term",
+   -0.051,
+   0.019
+  ],
+  [
+   "wide CNN instead of 12-layer",
+   -0.032,
+   -0.001
+  ],
+  [
+   "sentence prior correction tau0.3",
+   -0.037,
+   0.017
+  ],
+  [
+   "word-timing evidence beta0.5",
+   -0.06,
+   -0.01
+  ]
  ],
  "agree_all_th0.025": {
   "big": [
@@ -492,8 +635,7 @@
     0.23,
     0.64
    ]
-  ],
-  "corr_small": -0.12
+  ]
  },
  "agree_all_th0.03": {
   "big": [
@@ -511,8 +653,7 @@
     0.2,
     0.57
    ]
-  ],
-  "corr_small": -0.31
+  ]
  },
  "agree_all_th0.035": {
   "big": [
@@ -530,88 +671,109 @@
     0.22,
     0.59
    ]
-  ],
-  "corr_small": -0.29
+  ]
  },
- "agree_single_th0.03": {
-  "big": [
-   4,
-   6,
-   [
-    0.3,
-    0.9
-   ]
-  ],
-  "small": [
-   5,
-   11,
-   [
-    0.21,
-    0.72
-   ]
-  ],
-  "corr_small": -0.32
- },
+ "n_small_priv_effects": [
+  23,
+  30
+ ],
  "disagreements": [
   [
    "sentence prior correction tau0.5",
    -0.012,
    -0.001,
-   "public"
+   "public",
+   "10/09 20:35 novel-sentence 0.668 -> 0.718"
   ],
   [
    "higher 1 s share",
    -0.029,
    0.003,
-   "validation"
-  ],
-  [
-   "more 1 s members",
-   -0.029,
-   0.021,
-   "validation"
+   "validation",
+   "10/09 21:40 proxy: 3 s alone 0.525, 3 s + four 1 s models 0.561"
   ],
   [
    "wide CNN instead of 12-layer",
    -0.032,
    -0.001,
-   "public"
+   "public",
+   "10/13 11:20 proxy +0.020 for the wide CNN"
   ],
   [
    "sentence prior correction tau0.3",
    -0.037,
    0.017,
-   "validation"
+   "validation",
+   "10/09 21:00 proxy 0.558 -> 0.592"
   ],
   [
    "word-timing evidence beta0.5",
    -0.06,
    -0.01,
-   "public"
+   "public",
+   "10/13 20:40 proxy 0.533 -> 0.603"
   ],
   [
    "word-timing evidence beta1.0",
    -0.024,
    -0.008,
-   "public"
+   "public",
+   "10/13 20:40 proxy 0.533 -> 0.613"
   ],
   [
    "validation-motivated stack V",
    -0.027,
    0.022,
-   "validation"
+   "validation",
+   "10/14 13:30, built from the tau0.3 and timing results"
   ]
  ],
  "disagree_summary": {
-  "n": 8,
-  "validation_right": 4,
-  "wilson": [
-   0.22,
-   0.78
+  "n": 7,
+  "validation_right": 3,
+  "mean_gain": 0.0031,
+  "ci95": [
+   -0.008,
+   0.014
   ],
-  "mean_gain": 0.0053,
+  "signrank_p": 0.81,
   "max_gain": 0.022,
-  "max_loss": 0.0103
+  "max_loss": 0.0103,
+  "below_floor": 7
+ },
+ "selections": {
+  "actual": [
+   "final_AVG_SCGL_Qbig",
+   "final_IN1Qp_SCGL_b0.5",
+   "final_IN1_Q_big",
+   "final_IN1_Q_llm_plus",
+   "final_B9cIN_Qplus",
+   "final_B5i_L1_IN1",
+   "final_IN1Qp_SC0.15",
+   "final_B5i_L1",
+   "final_B9c_L1",
+   "final_IN1_Q_big_SCG2L_l0.5"
+  ],
+  "earlier": [
+   "final_IN1_Q_llm_plus",
+   "final_B5i_L1_IN1",
+   "final_B5i_L1",
+   "final_B9c_L1",
+   "final_B5i",
+   "final_B9c",
+   "final_M1",
+   "final_B5d10",
+   "final_V",
+   "final_F1"
+  ],
+  "replaced_on_last_day": [
+   "final_B5d10",
+   "final_B5i",
+   "final_B9c",
+   "final_F1",
+   "final_M1",
+   "final_V"
+  ]
  },
  "select_actual": [
   0.66304,
@@ -626,16 +788,60 @@
   0.68767,
   "final_V"
  ],
- "select_top10_public_no_late_lm": [
+ "select_top10_public_not_late": [
   0.67718,
   "final_B2"
  ],
- "select_random10_pub_ge_0.66": {
+ "backtest_pool_ge_0.66": {
   "pool": 60,
+  "p_le_actual": 0.00243,
+  "expected_best": 0.6802,
+  "pool_max": 0.68767
+ },
+ "backtest_late_family": {
+  "pool": 24,
+  "p_le_actual": 0.0942,
+  "expected_best": 0.6717,
+  "pool_max": 0.67704
+ },
+ "backtest_threshold_sensitivity": {
+  "0.64": {
+   "pool": 76,
+   "p_le_actual": 0.00334,
+   "expected_best": 0.681,
+   "pool_max": 0.68814
+  },
+  "0.65": {
+   "pool": 67,
+   "p_le_actual": 0.00191,
+   "expected_best": 0.6809,
+   "pool_max": 0.68814
+  },
+  "0.66": {
+   "pool": 60,
+   "p_le_actual": 0.00243,
+   "expected_best": 0.6802,
+   "pool_max": 0.68767
+  },
+  "0.67": {
+   "pool": 57,
+   "p_le_actual": 0.00149,
+   "expected_best": 0.6805,
+   "pool_max": 0.68767
+  },
+  "0.68": {
+   "pool": 47,
+   "p_le_actual": 0.00253,
+   "expected_best": 0.679,
+   "pool_max": 0.68767
+  }
+ },
+ "backtest_mc": {
+  "draws": 20000,
   "mean": 0.6802,
   "p10": 0.6733,
   "p90": 0.6877,
-  "frac_le_actual": 0.0024
+  "frac_le_actual": 0.00245
  },
  "best_private_overall": [
   [
@@ -652,47 +858,12 @@
    0.68618,
    "final_B6a",
    0.68096
-  ],
-  [
-   0.68248,
-   "final_B5i_t0.3",
-   0.67248
-  ],
-  [
-   0.68184,
-   "finalW_gpt2_a03",
-   0.6418
   ]
  ],
- "note_ranks": "public 13/90 (Kaggle CLI 2026-10-20); private 44/91 at 0.66304; V's 0.68767 falls between ranks 33 (0.68780) and 34 (0.68580) (private leaderboard page 2026-10-25)",
- "repeated_public_examples": {
-  "0.72001": [
-   "final_B5i_L1_IN2",
-   "final_B5i_L1avg",
-   "final_B5i_L1"
-  ],
-  "0.71301": [
-   "final_IN1_Q_big_SCGL_l0.3",
-   "final_IN1_Q_big_SCG2L_l0.3",
-   "final_IN1_Q_llm"
-  ]
- },
- "ablations_post_deadline": {
-  "abl_A5_lmonly": [
-   "0.70797",
-   "0.62437"
-  ],
-  "abl_A3_gui_b0": [
-   "0.70801",
-   "0.64387"
-  ],
-  "abl_A2_gen_b05": [
-   "0.70634",
-   "0.65241"
-  ],
-  "abl_A1_gen_b0": [
-   "0.72134",
-   "0.66161"
-  ]
+ "ranks": {
+  "private_actual": 44,
+  "private_if_V": 34,
+  "public": 13,
+  "teams": 91
  }
 }

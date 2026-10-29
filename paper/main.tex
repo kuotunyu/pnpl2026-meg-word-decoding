@@ -12,6 +12,7 @@
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{rotating}
 
 \title{When the Public Leaderboard Misleads:\\ Lessons from 99 Scored Submissions in Single-Subject MEG Word Decoding}
 
@@ -26,22 +27,16 @@
 \maketitle
 
 \begin{abstract}
-We describe our Deep-track entry to the 2026 PNPL Competition. The task is to decode which of 50 common English words a participant hears from magnetoencephalography (MEG), scored by class-balanced top-10 accuracy (BAcc@10). Our system combines an ensemble of convolutional word encoders and sentence-level Transformers with a closed-vocabulary language-model (LM) prior.
-
-In the last week we added two language-side components: an LM fine-tuned on synthetic vocabulary-only sentences, and whole-sentence candidate decoding. They raised our public score to 0.733, 13th of 90 teams on the public leaderboard of 20 October. On the private leaderboard our final selection scored 0.663, 44th of 91 teams on 25 October. Our best private score among all submissions, 0.688, came from a simpler system submitted a week earlier.
-
-Kaggle revealed private scores for all 99 of our submissions, and each submission's change is recorded, so we can examine this gap after the fact. In 30 reference--variant comparisons, changes with an absolute public effect of at least 0.03 kept their sign on the private split in 6 of 8 cases; smaller changes kept it in only 8 of 22. Among the 60 pre-deadline submissions with public score at least 0.66, public and private scores were negatively correlated ($r=-0.37$). When our in-session validation disagreed with the public score, neither was clearly better (4 of 8 each). But the cost was asymmetric: following validation would have gained up to 0.022 and lost at most 0.010. Selecting the ten best public submissions did worse than all but 0.24\% of random selections from the same pool.
-
-These are exploratory observations from one development history. We report them with the system and draw practical recommendations for model selection on small public splits.
+We describe our entry to the Deep track of the 2026 PNPL Competition, which asks for predictions of which of 50 English words a participant hears, made from magnetoencephalography (MEG) recordings and scored by class-balanced top-10 accuracy (BAcc@10). Our system combines an ensemble of convolutional word encoders and sentence-level Transformers with a closed-vocabulary language-model (LM) prior. Each team was ranked by the best private score among ten submissions it selected. In the last week, an LM fine-tuned on synthetic vocabulary-only sentences and whole-sentence candidate decoding raised our public score to 0.733 (13th of 91 teams). On the private split, however, the best of our ten selected submissions scored 0.663 (44th), while an earlier and simpler submission had reached 0.688. Using the public and private scores of all 99 of our submissions, we examine this gap retrospectively. Four large early changes kept the sign of their effect from the public to the private split; only 10 of 26 later changes did. Among submissions with public score at least 0.66, those from the last week averaged 0.714 public and 0.648 private, against 0.686 and 0.666 for earlier ones, and within either group the two scores were uncorrelated. Three repeats of one recipe with different seeds differed by up to 0.015 on the private split, more than most effects we tested. Only 0.24\% of random sets of ten drawn from the same 60 submissions did as badly as the ten with the highest public scores. These are exploratory observations from one development history, from which we draw practical recommendations for choosing final submissions when the public split is small.
 \end{abstract}
 
 \section{Introduction}
 
-Each test item is a word heard by \texttt{subj0}, either within a sentence or in isolation. A system outputs a distribution over the 50 target words, and the score is the mean over the 50 words of each word's Recall@10 (chance 0.20). The training data are about 780k words of audiobooks, TIMIT, MOCHA-TIMIT and podcasts. The test sentences are short conversational utterances composed almost entirely of the 50 target words~\cite{pnpl2026}.
+In the Deep track, all data come from one participant (\texttt{subj0}). Each test item is a word the participant heard, either within a sentence or in isolation. A system outputs a distribution over the 50 target words, and the score is the mean over the 50 words of each word's Recall@10, so chance is 0.20. The training data are about 780k words of audiobooks, TIMIT, MOCHA-TIMIT and podcasts. The test sentences are short conversational utterances made almost entirely of the 50 target words~\cite{pnpl2026}.
 
-During the competition, Kaggle shows a public score computed on part of the test set; the private score is revealed afterwards. We relied heavily on the public score, submitting up to ten times a day, which exposed us to adaptive over-selection on a small public split. Because private scores were later released for all of our submissions, we can look back at how public and private scores related.
+During the competition, Kaggle shows a public score computed on part of the test set. Each team then selects ten submissions, and its final result is the highest private score among them. We relied heavily on the public score, submitting up to ten times a day, which may have exposed us to adaptive over-selection. Kaggle released the private scores of all our submissions, so we can study retrospectively how public-score gains and our final selection related to private performance.
 
-The paper has three parts: the system (Section~\ref{sec:system}), a retrospective public--private analysis (Section~\ref{sec:analysis}), and a back-test of final-selection rules with recommendations (Section~\ref{sec:selection}). All leaderboard statistics are computed from the Kaggle export of our submissions by a released script. Experimental settings and the selection history come from our dated experiment log.
+The paper has three parts: the system (Section~\ref{sec:system}), a retrospective public--private analysis (Section~\ref{sec:analysis}), and a back-test of final-selection rules with recommendations (Section~\ref{sec:selection}). All leaderboard statistics are computed from the Kaggle export of our submissions by a released script. Hand-coded inputs, namely which submissions are compared, their labels and the two selections, are listed in that script with their sources in our dated experiment log.
 
 \section{System}
 \label{sec:system}
@@ -49,113 +44,95 @@ The paper has three parts: the system (Section~\ref{sec:system}), a retrospectiv
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_system.pdf}
-  \caption{System overview. Dashed: whole-sentence candidate decoding, added in the last week together with the in-domain GPT-2.}
+  \caption{System overview. Word epochs pass through a per-word CNN and a sentence Transformer; the ensemble's 50-way log-probabilities are combined with a language-model prior and, in the last week, with whole-sentence candidate decoding (dashed).}
   \label{fig:system}
 \end{figure}
 
-Figure~\ref{fig:system} gives an overview.
+\paragraph{Data and validation.} A run is one continuous recording, and a session is one recording visit. Each run is z-scored per channel and projected by a global, whitened PCA from 306 channels to 80 components. A word epoch is the window around a word's onset: $[-0.5, 2.5]$\,s at 50 or 100\,Hz (``3\,s'' models) or $[0, 1]$\,s at 125\,Hz (``1\,s'' models). TIMIT SA1/SA2 sentences recur 630 times each, and sentence models memorise them, so we train repeated sentences as isolated words.
 
-\paragraph{Data and validation.} Each run is z-scored per channel and projected by a global, whitened PCA from 306 to 80 components. Word epochs span $[-0.5, 2.5]$\,s at 50 or 100\,Hz (``3\,s'' models) or $[0, 1]$\,s at 125\,Hz (``1\,s'' models). TIMIT SA1/SA2 sentences recur 630 times each, and sentence models memorise them. We therefore train repeated sentences as isolated words and validate on held-out sentences whose text never occurs in training.
+Validation uses seven runs held out from supervised training (the PCA was fitted on a sample of runs that included two of them). We report two validation measures on these runs, both in BAcc@10. \emph{Novel-sentence validation} uses held-out sentences whose text never occurs in training. The \emph{proxy} uses 312 segments of these runs with 1{,}042 occurrences of the 50 target words, so that LM fusion can be tested. The test recordings were made in separate sessions, and their per-component input scale is about 1.35 times that of training.
 
-Validation uses seven runs held out from the training sessions. The test recordings were made separately, and their per-component input scale is about 1.35 times that of training. From the held-out runs we also built a proxy of the test set: 1{,}042 target words in 312 segments, restricted to the 50 words.
+\paragraph{MEG decoder.} We follow the word-decoding setup of d'Ascoli et al.~\cite{dascoli2025}, without their semantic objective. A convolutional encoder maps each word epoch to an embedding, and a pre-norm Transformer over the words of a sentence classifies each word among 1{,}000 classes: the 50 target words and the 950 most frequent other words. The submitted probabilities are a softmax over the 50 target classes only. The base configuration has $d{=}512$ and 8 layers, and a second head classifies each word without context. Final ensembles average the log-probabilities of about 30 members, which differ in window, sampling rate, depth (4 to 16 layers), CNN width and input normalisation. IN1 denotes our 31-member ensemble that includes three instance-normalised models. Some members are self-trained on the unlabelled test recordings, using an earlier submission's predictions as soft targets.
 
-\paragraph{MEG decoder.} We follow the word-decoding setup of d'Ascoli et al.~\cite{dascoli2025}, without their semantic objective. A convolutional encoder maps each word epoch to an embedding, and a pre-norm Transformer over the words of a sentence classifies each word among 1{,}000 classes. The base configuration has $d{=}512$ and 8 layers; a second head classifies each word without context. Final ensembles average the log-probabilities of about 30 members, which differ in window, sampling rate, depth (8 to 16 layers), CNN width and input normalisation. Some members are self-trained on the unlabelled test recordings with soft targets from an earlier submission.
+\paragraph{Language prior.} For each sentence position, a causal LM gives the probability of each of the 50 words, averaged over the beam hypotheses for the preceding words. Following pointwise mutual information (PMI), we subtract, for each word, the log of its average LM probability over all test positions. The result is added to the MEG log-probabilities with weight 0.5, using beam search with 32 hypotheses. GPT-2~\cite{radford2019} and GPT-2-medium are combined after rescaling their PMI terms to the same standard deviation.
 
-\paragraph{Language prior.} A causal LM gives a next-word score for each of the 50 words, using the beam hypotheses as context. We subtract the log of its average probability over all test sentence positions (PMI) and add the result to the MEG log-probabilities with weight 0.5. The beam size is 32, and GPT-2~\cite{radford2019} and GPT-2-medium are combined after matching the spread of their PMI terms. In the last week we added two components:
-\begin{itemize}
-\item \emph{In-domain LM.} GPT-2 is fine-tuned on 807 to 3{,}742 synthetic sentences that use only the 50 words, written by Claude and Qwen3.5-9B~\cite{qwen35}.
-\item \emph{Whole-sentence candidate decoding.} Every length-matched candidate sentence is scored against the MEG evidence at all positions, and the resulting per-position marginals are mixed into the submission. The recipe of our best public submission adds LLM proposals prompted with our top-6 words per position, an LM prior (0.5 times the candidate's in-domain LM log-probability) and mixing weight 0.3. A simpler variant uses generic candidates only, mixing weight 0.15 and no LM prior.
-\end{itemize}
+\paragraph{Prior correction, word timing and V.} \emph{Prior correction} with strength $\tau$ subtracts $\tau$ times the log training frequency of each word from the MEG log-probabilities. \emph{Word-timing evidence} with weight $\beta$ adds $\beta$ times the log-likelihood of the gap to the next word's onset given the word. The \emph{validation-motivated stack V} combines input rescaling, word timing ($\beta=0.5$) and sentence prior correction ($\tau=0.3$).
 
-\paragraph{Isolated words.} For the 92 isolated words we averaged the contextual and context-free heads and applied a prior correction ($\tau=0.7$). During the competition we assumed these rows counted only towards the private score. In fact, in four pairs of submissions that differed only in these rows, both the public and the private scores were identical to five decimals, although in the three pairs whose files we kept, 33--82\% of these rows had different top-10 sets. These rows therefore appear not to be scored in either split, and our tuning of them had no effect.
+\paragraph{Components added in the last week.} The \emph{in-domain LM} is GPT-2 fine-tuned on corpora of 807 to 3{,}742 synthetic sentences written by Claude and Qwen3.5-9B~\cite{qwen35}, each using only the 50 target words. One variant also adds a fine-tuned Qwen2.5-1.5B. \emph{Whole-sentence candidate decoding} scores every candidate sentence with the same number of words as the test sentence by its summed MEG log-probability. A softmax over the candidates gives per-position word probabilities, which are mixed into the submission with weight $\lambda$. If fewer than 20 candidates of that length exist, the base prediction is kept. Generic candidates come from the synthetic corpora ($\lambda=0.15$). Our best public submission adds LLM proposals prompted with our six highest-scoring words per position, a prior of 0.5 times each candidate's in-domain LM log-probability, and $\lambda=0.3$.
+
+\paragraph{Isolated words.} For the 92 isolated words we averaged the contextual and context-free heads and applied prior correction ($\tau=0.7$). During the competition we assumed that these rows counted only towards the private score. However, four pairs of submissions differed only in these rows, and in each pair the public and the private scores were identical to five decimals, although in the three pairs whose files we kept, 33--82\% of these rows had different top-10 sets. The rows therefore appear not to be scored in either split; at least, our tuning of them had no measurable effect.
 
 \section{Public versus private}
 \label{sec:analysis}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.84\linewidth]{fig_scatter.pdf}
-  \caption{Public and private BAcc@10 of our submissions with public score at least 0.5 (dotted line: equal scores). Circles mark the ten submissions in our final selection. V is the validation-motivated stack.}
-  \label{fig:scatter}
+  \includegraphics[width=\linewidth]{fig_overview.pdf}
+  \caption{(a) Public and private BAcc@10 of the 91 pre-deadline submissions with public score at least 0.5 (dotted line: equal scores), coloured by whether they were made before or after the in-domain LM was introduced. Black rings mark our ten final selections. (b) Milestones: 1 linear baseline, 2 per-word CNN, 3 sentence Transformer, 4 repeated-sentence handling, 5 closed-vocabulary LM fusion, 6 the 9-model ensemble with our best private score, 7 3\,s windows and LM calibration, 8 self-training, 9 diverse ensemble B5, 10 in-domain LM (807 sentences, the lowest of three seeds on private), 11 IN1 with the 3{,}742-sentence LM, 12 candidate decoding. Each milestone may change several components.}
+  \label{fig:overview}
 \end{figure}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.84\linewidth]{fig_progression.pdf}
-  \caption{Selected development milestones on the public and private splits, including the 9-model ensemble that has our best private score. Each milestone may change several components.}
-  \label{fig:progression}
-\end{figure}
+\paragraph{Scores of all submissions.} Over the 95 pre-deadline submissions, public and private scores correlate at $r=0.92$, but this reflects the large early steps. The correlation is 0.50 once the four sub-0.5 baselines are excluded, 0.11 for the 85 submissions with public score at least 0.6, and $-0.37$ for the 60 at or above 0.66 (95\% interval $-0.57$ to $-0.13$); we chose these thresholds after seeing the data. The negative value is a contrast between two groups (Figure~\ref{fig:overview}a). Among the 60, the 24 submissions from the last week averaged 0.714 public and 0.648 private, against 0.686 and 0.666 for the 36 earlier ones, and within each group the correlation is close to zero ($0.17$ and $0.01$). Our best private score, 0.6881, came from a 9-model ensemble submitted on 9 October with public score 0.65986, and no later submission exceeded it (Figure~\ref{fig:overview}b). Four further submissions, ablations of candidate decoding made after the deadline, are excluded throughout.
 
-Figures~\ref{fig:scatter} and~\ref{fig:progression} summarise the outcome. Over the 95 pre-deadline submissions, public and private scores correlate at $r=0.92$, but this mostly reflects the large early steps. The correlation falls to $0.50$ once the four sub-0.5 baselines are excluded. It becomes negative among the 60 submissions with public score at least 0.66 ($r=-0.37$) and among the 32 with at least 0.69 ($r=-0.53$).
-
-Our best private score, 0.6881, came from a 9-model ensemble with GPT-2 fusion submitted on 9 October (public 0.660); no later submission exceeded it. The 25 pre-deadline language-side submissions averaged 0.711 public but 0.648 private, against 0.658 and 0.654 for the 66 MEG-side submissions before them.
-
-These patterns are consistent with over-selection on the public split. Most later submissions branched from whichever submission had just reached a public peak, so their public scores were partly selected noise, and their private scores regressed. A single development history cannot separate this from genuine public/private differences.
+\paragraph{Why later public gains did not transfer.} Three mechanisms make public differences between related submissions unreliable here. First, almost every new submission was built from the one with the best public score so far: for 29 of our 30 comparisons below, the reference was the running public maximum. Its public score partly reflected favourable noise that its variants did not inherit, so their public scores tended to fall back while their private scores did not (mean change $-0.0095$ public against $-0.0003$ private over the 26 later comparisons). Second, self-training and guided candidates copy a public-selected submission's test predictions into later submissions, so the later submissions are not independent. Third, both splits are small samples. Three seeds of one recipe gave private scores of 0.627, 0.630 and 0.642 (standard deviation 0.008), so a difference between two submissions needs to exceed about 0.022 before its sign is informative. 23 of our 30 private effects are smaller than that. Public scores repeat the same five-decimal values more often than private ones (81 against 90 distinct values among 95 submissions); for example, three different in-domain-LM submissions all scored 0.72001. This is consistent with a small public split, although we do not know its size.
 
 \begin{table}[t]
-  \caption{Selected reference--variant comparisons: change in public and private score, and what in-session validation suggested before the private release ($+$ helps, $-$ hurts, n/a no matched validation result documented). $^\dagger$ marks bundles of several changes. All 30 comparisons are listed in Appendix~\ref{app:pairs}.}
+  \caption{Selected reference--variant comparisons (change in BAcc@10, variant minus reference) and the direction suggested by in-session validation before the private release ($+$ helps, $-$ hurts; n/a: no documented validation difference larger than the proxy noise of about 0.015). $^\dagger$ marks bundles of several changes. Appendix~\ref{app:pairs} lists all 30.}
   \label{tab:pairs}
   \centering
-  \small
   \input{tab_pairs_main.tex}
 \end{table}
 
-\paragraph{Paired comparisons.} We specified 30 reference--variant comparisons between submissions; 17 isolate one documented change and 13 bundle several (Table~\ref{tab:pairs}, Figure~\ref{fig:pairs}a, Appendix~\ref{app:pairs}). Changes with an absolute public effect of at least 0.03 kept their sign on the private split in 6 of 8 cases. Smaller changes kept it in only 8 of 22 (Wilson 95\% interval 0.20--0.57), and the correlation of their public and private effects was $-0.31$. The pattern is similar with thresholds of 0.025 or 0.035 and when only single changes are counted (5 of 11 small changes). The comparisons share baselines and were chosen by us, so these figures describe our history rather than a calibrated threshold.
+\paragraph{Paired comparisons.} We specified 30 reference--variant comparisons between submissions: 15 change one documented component and 15 bundle several (Table~\ref{tab:pairs}, Figure~\ref{fig:pairs}a, Appendix~\ref{app:pairs}). The four early structural changes, made between 7 and 9 October to a much weaker system, kept their sign on the private split: the sentence-context model ($+0.207$ private), LM fusion ($+0.055$), and the two LM alternatives we rejected. Among the 26 later comparisons, only 10 kept their sign (Wilson 95\% interval 0.22--0.57), and the public and private effects were not positively related ($r=-0.29$, interval $-0.61$ to $0.11$). Even later changes with an absolute public effect of at least 0.03 split two and two. The comparisons share references and were chosen by us, so these counts describe our history rather than a calibrated threshold.
 
-The language components show the selection problem clearly. Replacing GPT-2 with the 807-sentence in-domain LM gained $+0.010$ public but lost $0.038$ private. Expanding the corpus to 1{,}368 or 2{,}103 sentences \emph{raised} the private score by $0.038$ and $0.018$, while the public score fell or barely moved. Across in-domain-LM submissions the private score ranged from 0.624 to 0.677, and the variants with the highest public scores were among the lowest on private. Likewise, generic candidates gained $+0.012$ private, while the guided-pool recipe with the LM prior, which had the best public score, lost $0.006$.
+\paragraph{The language components.} Replacing GPT-2 with the 807-sentence in-domain LM increased the public score by 0.010 and decreased the private score by 0.038 for one seed. Over the three seeds the private change was $-0.033$ on average, and a mixture of the three seeds lost 0.012. Larger corpora mostly recovered this loss but did not clearly exceed the reference without the in-domain LM. Adding the 807 Claude sentences to the 1{,}575 Qwen sentences even reduced the private score from 0.674 to 0.651 while raising the public score. Across in-domain-LM submissions the private score ranged from 0.624 to 0.677. The 807-sentence variants with public scores of 0.719--0.722 scored 0.627--0.636 on private, among the lowest. Generic candidates changed the private score by $+0.012$, and the guided recipe with the best public score by $-0.006$, both within the seed spread. In short, the data neither establish nor rule out a benefit of these components, but they do show that selecting their variants by public score picked poor ones.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_pairs.pdf}
-  \caption{(a) Public and private effect of each of the 30 reference--variant comparisons (one off-scale point, the sentence-context redesign at $+0.267/+0.207$, is omitted). The grey band marks absolute public effects below 0.03; red points changed sign between the splits. (b) Best private score of ten submissions drawn at random from the 60 pre-deadline submissions with public score at least 0.66 (20{,}000 draws), with our actual final selection, the ten highest public scores excluding the last-week language components, and our selection one day before the deadline.}
+  \caption{(a) Public and private effect of the 30 reference--variant comparisons; the sentence-context redesign ($+0.267/+0.207$) is off the scale. Grey band: absolute public effect below 0.03. Red: the sign changed between splits; triangles: bundles; open markers: private effect below 0.005. (b) Best private score of ten distinct submissions drawn at random (20{,}000 draws) from the 60 pre-deadline submissions with public score at least 0.66, with three selections from Table~\ref{tab:select}.}
   \label{fig:pairs}
 \end{figure}
 
-\paragraph{Validation against public.} For eight comparisons, our component-level validation and the public score pointed in opposite directions before the private release. Private sided with validation four times and with public four times (Wilson interval for 4 of 8: 0.22--0.78). The stakes were not symmetric, however. Where validation was right, the private gains were $+0.003$ to $+0.022$: the 1\,s share, more 1\,s members, $\tau=0.3$ and the stack V. Where public was right, the losses from following validation were 0.001 to 0.010: $\tau=0.5$, the wide CNN and two word-timing strengths. On average, following validation would have gained 0.005 per decision.
-
-These cases overlap: V contains $\tau=0.3$ and word timing, and two of the cases concern 1\,s models. During the competition we read the repeated disagreements as evidence that the proxy did not represent the test set, and we followed the public score.
-
-\paragraph{Why small public differences were unreliable.} BAcc@10 weights each word equally, so on a split with few items per word a handful of items can move the score by 0.01--0.02. Our public scores repeat the same five-decimal values across submissions with different sentence predictions. For example, three different in-domain-LM submissions all scored 0.72001. This is consistent with a small public split, although we do not know its size.
+\paragraph{Validation against public.} For seven comparisons, in-session validation and the public score pointed in opposite directions before the private release. The private split sided with validation three times ($\tau=0.3$, the 1\,s share and V) and with the public score four times ($\tau=0.5$, the wide CNN and two word-timing strengths). Following validation would have changed the private score by $+0.003$ on average (95\% interval $-0.008$ to $+0.014$; exact signed-rank $p=0.81$), with every individual effect below the seed-noise level. The cases also overlap, since V contains $\tau=0.3$ and word timing. Validation was therefore neither clearly better nor clearly worse than the public score. During the competition we read the repeated disagreements as evidence against the proxy and followed the public score.
 
 \section{Final selection}
 \label{sec:selection}
 
 \begin{table}[t]
-  \caption{Back-test of final-selection rules: best private score among ten submissions made before the deadline. The random rule uses 20{,}000 draws of ten distinct submissions from the 60 with public score at least 0.66.}
+  \caption{Back-test of final-selection rules: best private score among ten submissions made before the deadline. Random rules: exact expectation and probability of scoring at most 0.663, over all sets of ten distinct submissions from the pool.}
   \label{tab:select}
   \centering
-  \small
-  \begin{tabular}{lc}
+  \begin{tabular}{lcc}
     \toprule
-    Rule & Best private \\
+    Rule & Best private & P(\,$\leq 0.663$) \\
     \midrule
-    Our actual final selection & 0.663 \\
-    Ten highest public scores (8 of 10 shared with the actual selection) & 0.663 \\
-    Ten highest public, excluding the last-week language components & 0.677 \\
-    Ten random submissions with public $\geq 0.66$: mean (10th--90th percentile) & 0.680 (0.673--0.688) \\
-    Our selection one day before the deadline (included V) & 0.688 \\
+    Our actual final selection & 0.663 & -- \\
+    Ten highest public scores (8 of 10 shared with the actual selection) & 0.663 & -- \\
+    Ten highest public among submissions before the in-domain LM & 0.677 & -- \\
+    Ten random from the 60 with public $\geq 0.66$ & 0.680 & 0.24\% \\
+    Ten random from the 24 last-week submissions among those 60 & 0.672 & 9.4\% \\
+    Our selection one day before the deadline (included V) & 0.688 & -- \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Kaggle allowed ten final submissions and scores the best of them on the private split. One day before the deadline, our recorded selection deliberately mixed public-best and validation-backed submissions, including V. On the last day, after the language-side components raised the public score, the final selection replaced the validation-backed submissions with public-best ones. That moved the result from 0.6877 to 0.663. V's score would have placed it 34th on the private leaderboard of 25 October; the actual result was 44th.
+One day before the deadline, our recorded selection mixed four in-domain-LM submissions with three earlier ensembles and three validation-backed submissions, including V. On the last day, after the 3{,}742-sentence LM and candidate decoding raised the public score further, the final selection replaced all six submissions made before the in-domain LM with later ones. That moved the result from 0.6877 to 0.6630. According to the private leaderboard, V's score would have placed us 34th instead of 44th.
 
-Table~\ref{tab:select} and Figure~\ref{fig:pairs}b compare this with simple alternatives. Choosing the ten highest public scores gives the same 0.663. Only 0.24\% of random draws from the same 60-submission pool were as low. The pool and rules are defined in hindsight, and the pool over-represents heavily explored families, so this is a property of our submissions rather than a general result.
+Table~\ref{tab:select} and Figure~\ref{fig:pairs}b compare simple alternatives. Choosing the ten highest public scores also gives 0.663. Only 0.24\% of random sets of ten from the 60 submissions with public score at least 0.66 were as low; the figure is between 0.15\% and 0.33\% for thresholds from 0.64 to 0.68. Within the 24 last-week submissions, the family that the final selection came from, 9.4\% were as low. V is the best private score in the 60-submission pool, and the overall best submission (public 0.65986) is just below the pool's cutoff. The pool and rules are defined in hindsight, so these figures describe our submissions rather than a general result.
 
 Our recommendations for small public splits:
 \begin{enumerate}
-\item Treat public differences comparable to the spread among related configurations (here about 0.03) as unreliable, especially for late changes chosen on the public split alone.
-\item Reserve part of the final selection for submissions that careful validation prefers. When validation and public disagree, the downside of following validation may be small.
-\item Record each submission's reference submission, so that paired effects, not only levels, can be checked afterwards.
-\item Check which test rows are actually scored. Our isolated-word tuning turned out to be irrelevant.
+\item Repeat at least one recipe with different seeds, and treat public differences smaller than that spread, or than the spread among related configurations (here 0.01--0.03), as unreliable, especially for late changes chosen on the public split alone.
+\item Diversify the final selection across selection criteria. When the result is the best of ten, spreading the selection over imperfectly correlated criteria (public score, validation, earlier strong systems) protects against any single criterion being wrong, as our day-before selection did.
+\item Record each submission's reference submission, so that paired effects, and not only levels, can be checked afterwards.
+\item Check which test rows are scored, for example by submitting pairs that differ only in some rows. Our isolated-word tuning had no measurable effect.
 \end{enumerate}
 
 \section{Discussion}
-For this single, deeply sampled subject, two large structural changes transferred to the private split: sentence context ($+0.207$ private) and closed-vocabulary LM fusion ($+0.055$). Many later changes moved the public and private scores by similar amounts in unrelated directions.
+For this single, deeply sampled subject, two large structural changes held up on the private split: the sentence-context redesign ($+0.207$) and closed-vocabulary LM fusion ($+0.055$). For most later changes, the direction of the public-score change did not predict the direction of the private-score change, and most private effects were below seed noise. The language-side components were neither shown to help nor ruled out, but choosing their variants by public score selected poor ones. A validation proxy built from recordings outside the training sessions would be a promising improvement. Kaggle rankings are provisional; the organisers' verification determines the final standings.
 
-The language-side ideas are not refuted. Larger in-domain corpora and generic candidates improved the private score; it was the variants selected by their public scores that did not. In-session validation was an imperfect but low-risk guide. A better proxy, built from recordings outside the training sessions, would likely be the most valuable improvement. Kaggle rankings are provisional, and the organisers' verification determines the final standings.
-
-\paragraph{Reproducibility.} The repository \url{https://github.com/kuotunyu/pnpl2026-meg-word-decoding} contains the code, the corpora, the submission export and the analysis script, and links to the checkpoints. MEG models were trained on Google Colab A100 GPUs and a local RTX 4090.
+\paragraph{Reproducibility.} The repository \url{https://github.com/kuotunyu/pnpl2026-meg-word-decoding} contains the code, the corpora, the submission export with leaderboard snapshots, and the analysis script, and links to the checkpoints. MEG models were trained on Google Colab A100 GPUs and a local RTX 4090.
 
 \begin{ack}
 We thank the PNPL organisers for the competition and the dataset. The release of private scores for all submissions made this analysis possible. This work received no external funding; the author declares no competing interests.
@@ -173,8 +150,14 @@ We thank the PNPL organisers for the competition and the dataset. The release of
 \appendix
 \section{All reference--variant comparisons}
 \label{app:pairs}
-S: one documented change; B: several changes at once. Validation as in Table~\ref{tab:pairs}; it is component-level and was recorded before the private release, though sometimes after the public result. Some reference submissions were created after their variant, as matched controls. Generated by \texttt{analysis/analyze\_lb.py} and \texttt{make\_tables.py} from \texttt{analysis/data/submissions\_raw.csv}.
+{\raggedright Table~\ref{tab:allpairs} lists all 30 comparisons with the Kaggle file names of the reference and the variant. Validation labels are component-level: they come from smaller validation ensembles, were recorded before the private release, and were sometimes recorded after the public result; the experiment-log entry behind each label is listed in the released analysis. Some references were submitted after their variant, as matched controls. With an absolute public-effect threshold of 0.025, 0.03 or 0.035, the large and small groups kept their sign in 6 of 11 and 8 of 19, 6 of 8 and 8 of 22, or 5 of 7 and 9 of 23 cases. Our two recorded selections are, on 15 October: \texttt{IN1\_Q\_llm\_plus}, \texttt{B5i\_L1\_IN1}, \texttt{B5i\_L1}, \texttt{B9c\_L1}, \texttt{B5i}, \texttt{B9c}, \texttt{M1}, \texttt{B5d10}, \texttt{V}, \texttt{F1}; and on 16 October (final): \texttt{AVG\_SCGL\_Qbig}, \texttt{IN1Qp\_SCGL\_b0.5}, \texttt{IN1\_Q\_big}, \texttt{IN1\_Q\_llm\_plus}, \texttt{B9cIN\_Qplus}, \texttt{B5i\_L1\_IN1}, \texttt{IN1Qp\_SC0.15}, \texttt{B5i\_L1}, \texttt{B9c\_L1}, \texttt{IN1\_Q\_big\_SCG2L\_l0.5} (file names without the \texttt{final\_} prefix). The tables and statistics are generated by \texttt{analysis/analyze\_lb.py} and \texttt{analysis/make\_tables.py} from \texttt{analysis/data/submissions\_raw.csv}.\par}
 
-\noindent\resizebox{\linewidth}{!}{\input{tab_pairs_all.tex}}
+\begin{sidewaystable}
+  \caption{All 30 reference--variant comparisons (change in BAcc@10, variant minus reference). Type: single documented change or bundle of several. Validation as in Table~\ref{tab:pairs}.}
+  \label{tab:allpairs}
+  \centering
+  \setlength{\tabcolsep}{4pt}
+  \input{tab_pairs_all.tex}
+\end{sidewaystable}
 
 \end{document}

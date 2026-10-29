@@ -1,11 +1,11 @@
 \begin{tabular}{lrrc}
     \toprule
-    Change & $\Delta$ public & $\Delta$ private & Validation \\
+    Change (variant minus reference) & $\Delta$ public & $\Delta$ private & Validation \\
     \midrule
     sentence-context model (redesign)$^\dagger$ & $+0.267$ & $+0.207$ & n/a \\
     closed-vocab LM fusion (PMI) & $+0.045$ & $+0.055$ & $+$ \\
     Qwen3-8B instead of GPT-2 & $-0.041$ & $-0.079$ & $-$ \\
-    N-best hard marginals instead of soft PMI & $-0.074$ & $-0.061$ & n/a \\
+    N-best hard marginals, no PMI$^\dagger$ & $-0.074$ & $-0.061$ & n/a \\
     \midrule
     self-training round 1 & $+0.015$ & $+0.002$ & n/a \\
     LM fusion after self-training & $+0.022$ & $-0.012$ & n/a \\
@@ -15,9 +15,10 @@
     word-timing evidence $\beta{=}0.5$ & $-0.060$ & $-0.010$ & $+$ \\
     validation-motivated stack V$^\dagger$ & $-0.027$ & $+0.022$ & $+$ \\
     \midrule
-    in-domain LM (807 sentences) & $+0.010$ & $-0.038$ & n/a \\
+    in-domain LM (807 sentences, seed 0) & $+0.010$ & $-0.038$ & n/a \\
+    in-domain LM, 3-seed mixture$^\dagger$ & $+0.010$ & $-0.012$ & n/a \\
     in-domain corpus 807 $\to$ 1,368 & $-0.010$ & $+0.038$ & n/a \\
-    in-domain corpus 807 $\to$ 2,103 (IN1) & $+0.002$ & $+0.018$ & n/a \\
+    in-domain corpus 807 $\to$ 2,103 (adds Qwen; IN1) & $+0.002$ & $+0.018$ & n/a \\
     generic candidates, $\lambda{=}0.15$ & $-0.003$ & $+0.012$ & n/a \\
     candidate decoding (guided pool + LM prior)$^\dagger$ & $+0.009$ & $-0.006$ & n/a \\
     \bottomrule
